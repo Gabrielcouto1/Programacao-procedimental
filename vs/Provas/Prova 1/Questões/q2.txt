@@ -1,0 +1,7 @@
+2. (5 pontos) O que faz o algoritmo? Em outras palavras, qual é o problema que o algoritmo
+resolve? 
+
+	O algoritmo primeiro captura o valor N e o valor M, que são maiores que 0 e inseridos pelo usuário. 
+	Em seguida, ele realiza N operações de multiplicação por M, de 1 a N e apresenta a somatória delas e o valor de N. 
+
+	Por exemplo, se o usuário inserir N=5 e M=12, o programa mostra o valor de N e a somatória (1*12)+(2*12)+(3*12)+(4*12)+(5*12).

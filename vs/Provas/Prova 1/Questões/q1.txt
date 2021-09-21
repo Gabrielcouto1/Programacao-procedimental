@@ -1,0 +1,9 @@
+1. (2 pontos) O que se pode afirmar com certeza sobre o valor da variável c ao término da
+instrução enquanto (instantes antes da execução da instrução escrever)? 
+	
+	A variável C representa o contador que é utilizado no laço de repetição while,que
+nesse caso assumirá o valor de n, uma vez que o código deixa claro que as instruções se repetirão
+enquanto o contador for menor que a variável N, então o laço parará de repetir quando C apresentar 
+o valor igual a N.
+
+	Nesta linha, C apresenta o mesmo valor de N, encerrando o laço.
