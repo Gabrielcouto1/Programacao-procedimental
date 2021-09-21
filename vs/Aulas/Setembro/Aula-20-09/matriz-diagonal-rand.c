@@ -8,9 +8,10 @@ Por Gabriel Couto de Freitas em 2021
 #include <stdlib.h> //Inclusao de biblioteca de funcoes basicas em C
 #include <time.h> //Inclusao de biblioteca para uso da funcao time()
 
-const int l=3;//Quantidade de linhas e colunas da matriz
-const int c=3;
-const int max=8;//Numeros gerados no conjunto [0,7]
+const int l=3;  //Quantidade de linhas da matriz
+const int c=3;  //Quantidadede colunas da matriz
+const int max=8;    //Numeros gerados no conjunto [0,7]
+
 int main()
 {
     int m[l][c];    //Matriz
