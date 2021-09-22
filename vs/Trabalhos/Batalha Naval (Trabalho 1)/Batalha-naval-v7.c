@@ -36,7 +36,7 @@ int main()
         }
     }
 
-    if(MD==PLAY){   //Impressao do oceano inicial caso modo de jogo for PLAY
+    if(MD==PLAY){ //Impressao do oceano inicial caso modo de jogo for PLAY
         for(i=0;i<=o;i++){      
             if(i==0){
                 printf(" ");
@@ -138,7 +138,7 @@ int main()
         linha='A';
         printf("Submarinos:   %d\nDestruidores: %d\nTorpedos:     %d\n\n",qtd_sub,qtd_dest,qtd_tor);
     }
-    do{      //O usuario atira e o programa retorna o oceano atualizado 
+    do{  //O usuario atira e o programa retorna o oceano atualizado 
         printf("Insira a coluna que deseja atacar: ");
         scanf("%d",&coluna_ataque);
         coluna_ataque--;
