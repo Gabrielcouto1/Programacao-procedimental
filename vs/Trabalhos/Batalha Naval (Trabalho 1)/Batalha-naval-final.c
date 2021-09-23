@@ -10,18 +10,23 @@ const int s=3;  //Quantidade de submarinos que serao gerados aleatoriamente
 const int d=0;  //Quantidade de destruidores que serao gerados aleatoriamente
 const int t=6;  //Quantidade de torpedos que o usuario podera disparar
 
-const int MD=PLAY;     //Variavel MD que dira se o programa sera jogado(PLAY) ou corrigido(CORR)
+const int MD=CORR;     //Variavel MD que dira se o programa sera jogado(PLAY) ou corrigido(CORR)
 
 int main()
 {
+    if(((t<=0)||(d<0)||(s<0))||(d==0)&&(s==0)){//Caso tenha algum erro de declaracao de variavel antes da main()
+        printf("\n\nO valor de elementos(Torpedos,Destruidores,Submarinos) inseridos no inicio do programa eh invalido.\n\n");
+        return 3;   //Retorna o valor 3, indicando erro de declaracao de variavel antes da funcao main.
+    }
+    
     char oceano[o][o];  //Matriz oceano de ordem "o" preestabelecida
     int i,j,k,h;    //Contadores usados para imprimir a matriz na tela
     char linha= 'A'; //Variavel usada para imprimir a letra das linhas na tela
     int sub=0;  //Contador usado para determinar a posicao dos submarinos
     int dest=0; //Contador usado para determinar a posicao dos destruidores
-    int i_1[s],j_1[s];  //Armazenam a posicao dos submarinos
-    int i_2[d],j_2[d];  //Armazenam a posicao dos destruidores
-    int dir_dest=0; //Determina se o destruidor tera duas casas horizontais ou verticais
+    int i_1[s],j_1[s];                //Armazenam a posicao dos submarinos
+    int i_2[d],j_2[d],i_3[d],j_3[d];  //Armazenam a posicao dos destruidores
+    int dir_dest[d]; //Determina se o destruidor tera duas casas horizontais ou verticais
     int qtd_sub=s;  //Qtd de submarinos restantes
     int qtd_dest=d; //Qtd de destruidores restantes
     int qtd_tor=t;  //Qtd de torpedos restantes
@@ -29,7 +34,7 @@ int main()
     char linha_ataque=' ';  //Linha que o usuario deseja atacar
     int linha_ataque_1=0;   //Linha que o usuario deseja atacar 
     int acerto=0;   //Determina se o usuario acertou o disparo
-    //ATACAR DESTRUIDOR
+    
     for (i=0;i<o;i++){  //Define o estado inicial da matriz como um espaco vazio
         for(j=0;j<o;j++){
             oceano[i][j]=' ';
@@ -49,13 +54,15 @@ int main()
     while (dest<d){//Determina a posicao dos destruidores
         i_2[dest]=rand()%o;
         j_2[dest]=rand()%o;
-        dir_dest=rand()%2;
-        if(dir_dest==0){    //O destruidor tem 2 casas verticais 
+        dir_dest[dest]=rand()%2;
+        if(dir_dest[dest]==0){    //O destruidor tem 2 casas verticais 
             if(oceano[i_2[dest]][j_2[dest]]==' '&&oceano[i_2[dest]+1][j_2[dest]]==' '){
                 if(MD==CORR){
                     oceano[i_2[dest]][j_2[dest]]='D';
                     oceano[i_2[dest]+1][j_2[dest]]='D';
             }
+            i_3[dest]=i_2[dest]+1;
+            j_3[dest]=j_2[dest];
             dest++;
             }
         }
@@ -65,12 +72,15 @@ int main()
                     oceano[i_2[dest]][j_2[dest]]='D';
                     oceano[i_2[dest]][j_2[dest]+1]='D';
                 }
+                i_3[dest]=i_3[dest];
+                j_3[dest]=j_2[dest]+1;
             dest++;
             }
         }
     }
 
-    for(i=0;i<=o;i++){ //Imprime o oceano na tela     
+    do{  //O usuario atira e o programa retorna o oceano atualizado 
+        for(i=0;i<=o;i++){//Imprime o oceano na tela com as informaçoes dos tiros dados      
             if(i==0){
                 printf(" ");
                 for(h=0;h<o;h++){
@@ -88,7 +98,6 @@ int main()
                 }
             }
             printf("\n");
-
             if(i!=o){
                 printf("%c ",linha);
                 linha++;
@@ -97,13 +106,12 @@ int main()
                     if(j==o-1)
                         printf("|");
                 }
-                printf("\n");
             }
+            printf("\n");
         }
-    linha='A';
-    printf("Submarinos:   %d\nDestruidores: %d\nTorpedos:     %d\n\n",qtd_sub,qtd_dest,qtd_tor);
+        printf("Destruidores: %d\nSubmarinos:   %d\nTorpedos:     %d\n\n",qtd_dest,qtd_sub,qtd_tor);
+        linha='A';
 
-    do{  //O usuario atira e o programa retorna o oceano atualizado 
         printf("Insira a coluna que deseja atacar: ");
         scanf("%d",&coluna_ataque);
         coluna_ataque--;
@@ -133,76 +141,107 @@ int main()
                 }
             }
         }
+        
         //Verifica se o tiro ja foi dado nesta casa
         if((oceano[linha_ataque_1][coluna_ataque]=='W')||(oceano[linha_ataque_1][coluna_ataque]=='*'))
             printf("\nVoce ja atacou esta casa do oceano. Tente novamente.\n\n");
         
         else{   //Verifica se acertou um submarino
-            sub=0;//Condicao iniciao para o proximo while
+            dest=0;//Condicao iniciao para o proximo while
+            sub=0; //Condicao iniciao para o proximo while
             qtd_tor--;
             while(sub<s){   //Verifica se acertou um submarino
                 if((i_1[sub]==linha_ataque_1)&&(j_1[sub]==coluna_ataque)){
-                    printf("\n\n\n\nVoce afundou uma nave!\n");
                     oceano[linha_ataque_1][coluna_ataque]='*';
                     acerto++;
-                    qtd_sub--;
                 }
                 sub++;
             }
-            if(acerto==0){
-                oceano[linha_ataque_1][coluna_ataque]='W';
-                printf("\n\n\n\nSeu torpedo se perdeu na agua!\n");
+            
+            if(acerto==0){  //Verifica se acertou um destruidor, apenas se nao acertar um submarino
+                while(dest<d){ //Verifica se acertou um destruidor
+                    if(((i_2[dest]==linha_ataque_1)&&(j_2[dest]==coluna_ataque))||((i_3[dest]==linha_ataque_1)&&(j_3[dest]==coluna_ataque))){
+                        oceano[linha_ataque_1][coluna_ataque]='*';
+                        if(dir_dest[dest]==0){
+                            if((oceano[linha_ataque_1+1][coluna_ataque]=='*')||(oceano[linha_ataque_1-1][coluna_ataque]=='*'))
+                                acerto=3;
+                            else
+                                acerto=2;  
+                        }
+                        else if(dir_dest[dest]!=0){
+                            if((oceano[linha_ataque_1][coluna_ataque+1]=='*')||(oceano[linha_ataque_1][coluna_ataque-1]=='*'))
+                                acerto=3;
+                            else
+                                acerto=2;
+                        }
+                    }
+                    dest++;
+                }
             }
-            acerto=0;
-
-            for(i=0;i<=o;i++){//Imprime o oceano na tela com as informaçoes dos tiros dados      
-                if(i==0){
-                    printf(" ");
-                    for(h=0;h<o;h++){
-                        if(h==o-1)
-                            printf("   %d\n",h+1);
-                        else 
-                            printf("   %d",h+1);
-                    }
-                }
-                printf("  ");
-                for(k=0;k<o;k++){
-                    printf("+---");
-                    if(k==o-1){
-                        printf("+");
-                    }
-                }
-                printf("\n");
-                if(i!=o){
-                    printf("%c ",linha);
-                    linha++;
-                    for(j=0;j<o;j++){
-                        printf("| %c ",oceano[i][j]);
-                        if(j==o-1)
-                            printf("|");
-                    }
-                }
-                printf("\n");
+            
+            switch(acerto){//Verifica se acertou um destruidor ou um submarino ou se errou
+                case 0:
+                    printf("\n\n\n\nSeu torpedo se perdeu na agua!\n\n");
+                    oceano[linha_ataque_1][coluna_ataque]='W';
+                    acerto=0;
+                    break;
+                case 1:
+                    printf("\n\n\n\nVoce afundou uma nave!\n\n");
+                    qtd_sub--;
+                    acerto=0;
+                    break;
+                case 2:
+                    printf("\n\n\n\nVoce afundou uma parte de um destruidor!\n\n");
+                    acerto=0;
+                    break;
+                case 3:
+                    printf("\n\n\n\nVoce afundou um destruidor!!\n\n");
+                    acerto=0;
+                    qtd_dest--;
+                    break;
             }
-            printf("Destruidores: %d\nSubmarinos:   %d\nTorpedos:     %d\n\n",qtd_sub,qtd_dest,qtd_tor);
-            linha='A';
         }
-    } while((qtd_tor!=0)&&((qtd_dest!=0)||(qtd_sub!=0))); //Estabelece as condicoes de fim de jogo
+    } while((qtd_tor>0)&&((qtd_dest>0)||(qtd_sub>0))); //Estabelece as condicoes de fim de jogo
+    
+    for(i=0;i<=o;i++){//Imprime o oceano final na tela, contendo as informacoes de tiros e navios afundados
+            if(i==0){
+                printf(" ");
+                for(h=0;h<o;h++){
+                    if(h==o-1)
+                        printf("   %d\n",h+1);
+                    else 
+                        printf("   %d",h+1);
+                }
+            }
+            printf("  ");
+            for(k=0;k<o;k++){
+                printf("+---");
+                if(k==o-1){
+                    printf("+");
+                }
+            }
+            printf("\n");
+            if(i!=o){
+                printf("%c ",linha);
+                linha++;
+                for(j=0;j<o;j++){
+                    printf("| %c ",oceano[i][j]);
+                    if(j==o-1)
+                        printf("|");
+                }
+            }
+            printf("\n");
+        }
+    printf("Destruidores: %d\nSubmarinos:   %d\nTorpedos:     %d\n\n",qtd_sub,qtd_dest,qtd_tor);
     
     if(qtd_tor==0){//Verifica qual foi a condicao para o jogo ter acabado
-        if((qtd_sub==0)&&(qtd_dest==0)){
-            printf("\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
-            return 1;   //Fim de jogo por finalizacao dos navios
-        }
-        else {
-            printf("Voce perdeu o jogo :(\nAcabaram todos os seus torpedos.\n");
-            return 2;   //Fim de jogo por falta de torpedos
-        }
+        if((qtd_sub==0)&&(qtd_dest==0))
+            printf("\n\nVoce ganhou o jogo :)!!!!\n\nAcabaram todos os navios no oceano.\n");
+        else 
+            printf("\n\nVoce perdeu o jogo :(\n\nAcabaram todos os seus torpedos.\n");
     }
-    else if((qtd_sub==0)&&(qtd_dest==0)){
-        printf("\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
-        return 1;   //Fim de jogo por finalizacao dos navios
-    }
-
+    
+    else if((qtd_sub==0)&&(qtd_dest==0))//Verifica qual foi a condicao para o jogo ter acabado
+        printf("\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
     return 0;  //Encerra o programa e retorna o valor 0
 }

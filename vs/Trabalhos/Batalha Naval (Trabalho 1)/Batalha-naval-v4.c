@@ -1,140 +1,242 @@
 #include <stdio.h> //Inclusao de biblioteca de funcoes basicas em C
 #include <stdlib.h> //Inclusao de biblioteca de funcoes basicas em C
 #include <ctype.h> //Inclusao de biblioteca de funcoes usando caracteres e manipulacao de string    
-#include <time.h> //Inclusao de biblioteca para usar a hora atual do computador
 
-const int o=5;      //Tamanho da matriz que apresenta o oceano  
-const int num_navio=3;  //Quantidade de navios que serao gerados aleatoriamente
+#define PLAY 0  //Definicao de "PLAY" para alterar facilmente o modo de execucao do codigo
+#define CORR 1  //Definicao de "CORR" para alterar facilmente o modo de execucao do codigo
+
+const int o=5;  //Tamanho da matriz que apresenta o oceano  
+const int s=3;  //Quantidade de submarinos que serao gerados aleatoriamente
+const int d=2;  //Quantidade de destruidores que serao gerados aleatoriamente
+const int t=6;  //Quantidade de torpedos que o usuario podera disparar
+
+const int MD=CORR;     //Variavel MD que dira se o programa sera jogado(PLAY) ou corrigido(CORR)
 
 int main()
 {
-    int i;                  //Variavel para contar as colunas   
-    int j;                  //Variavel para contar as linhas
-    int coluna_ataque=0;    //Variavel que coleta a coluna que o usuario deseja atacar  
-    char linha_ataque='0';  //Variavel que colea a linha que o usuario deseja atacar
-    char c='A';             //Variavel utilizada para coletar 
-    char n_l[num_navio];    //Array que armazena a posição dos navios sorteados nas linhas
-    int n_c[num_navio];     //Array que armazena a posição dos navios sorteados nas colunas 
-    int r=0;                //Variavel auxiliar que servirá para armazenar temporariamente o numero aleatorio gerado
-    int qtd_num_rand=0;     //Variavel auxiliar utilizada nos laços de repetição para verificar quantos numeros nao repetidos foram gerados
-    int rep=0;              //Variavel auxiliar utilizada para verificar se o numero gerado é repetido ou nao
-
-    srand(time(NULL));
-
-    printf("      1   2   3   4   5\n");
-    for (i=0;i<=o;i++){              //Coloca o oceano inicial na tela
-        printf("    +---+---+---+---+---+\n");
-        if(i<o)
-            printf("%c   ",c);
-        c++;
-        for (j=0;j<o&&i<o;j++){
-            printf("|   ");
+    char oceano[o][o];  //Matriz oceano de ordem "o" preestabelecida
+    int i,j,k,h;    //Contadores usados para imprimir a matriz na tela
+    char linha= 'A'; //Variavel usada para imprimir a letra das linhas na tela
+    int sub=0;  //Contador usado para determinar a posicao dos submarinos
+    int dest=0; //Contador usado para determinar a posicao dos destruidores
+    int i_1[s],j_1[s];  //Armazenam a posicao dos submarinos
+    int i_2[d],j_2[d];  //Armazenam a posicao dos destruidores
+    int dir_dest[d]; //Determina se o destruidor tera duas casas horizontais ou verticais
+    int qtd_sub=s;  //Qtd de submarinos restantes
+    int qtd_dest=d; //Qtd de destruidores restantes
+    int qtd_tor=t;  //Qtd de torpedos restantes
+    int coluna_ataque=0;    //Coluna que o usuario deseja atacar  
+    char linha_ataque=' ';  //Linha que o usuario deseja atacar
+    int linha_ataque_1=0;   //Linha que o usuario deseja atacar 
+    int acerto=0;   //Determina se o usuario acertou o disparo
+    //ATACAR DESTRUIDOR
+    for (i=0;i<o;i++){  //Define o estado inicial da matriz como um espaco vazio
+        for(j=0;j<o;j++){
+            oceano[i][j]=' ';
         }
-            if(i<o)
-            printf("|\n");
     }
-    
-    c='A';
-    for (i=0;i<num_navio;i++){      //Sorteia 3 numeros para a coluna dos navios 
-        r=(rand()%5)+1;
+
+	while(sub<s){ //Determina a posicao dos submarinos
+        i_1[sub]=rand()%o;
+        j_1[sub]=rand()%o;
+        if(oceano[i_1[sub]][j_1[sub]]==' '){
+            if(MD==CORR)
+                oceano[i_1[sub]][j_1[sub]]='S';    
+            sub++;
+        }
+    }
+
+    while (dest<d){//Determina a posicao dos destruidores
+        i_2[dest]=rand()%o;
+        j_2[dest]=rand()%o;
+        dir_dest[dest]=rand()%2;
+        if(dir_dest[dest]==0){    //O destruidor tem 2 casas verticais 
+            if(oceano[i_2[dest]][j_2[dest]]==' '&&oceano[i_2[dest]+1][j_2[dest]]==' '){
+                if(MD==CORR){
+                    oceano[i_2[dest]][j_2[dest]]='D';
+                    oceano[i_2[dest]+1][j_2[dest]]='D';
+            }
+            dest++;
+            }
+        }
+        else{               //O destruidor tem 2 casas horizontais
+            if(oceano[i_2[dest]][j_2[dest]]==' '&&oceano[i_2[dest]][j_2[dest]+1]==' '){
+                if(MD==CORR){
+                    oceano[i_2[dest]][j_2[dest]]='D';
+                    oceano[i_2[dest]][j_2[dest]+1]='D';
+                }
+            dest++;
+            }
+        }
+    }
+
+    do{  //O usuario atira e o programa retorna o oceano atualizado 
+        for(i=0;i<=o;i++){//Imprime o oceano na tela com as informaçoes dos tiros dados      
+            if(i==0){
+                printf(" ");
+                for(h=0;h<o;h++){
+                    if(h==o-1)
+                        printf("   %d\n",h+1);
+                    else 
+                        printf("   %d",h+1);
+                }
+            }
+            printf("  ");
+            for(k=0;k<o;k++){
+                printf("+---");
+                if(k==o-1){
+                    printf("+");
+                }
+            }
+            printf("\n");
+            if(i!=o){
+                printf("%c ",linha);
+                linha++;
+                for(j=0;j<o;j++){
+                    printf("| %c ",oceano[i][j]);
+                    if(j==o-1)
+                        printf("|");
+                }
+            }
+            printf("\n");
+        }
+        printf("Destruidores: %d\nSubmarinos:   %d\nTorpedos:     %d\n\n",qtd_sub,qtd_dest,qtd_tor);
+        linha='A';
+
+        printf("Insira a coluna que deseja atacar: ");
+        scanf("%d",&coluna_ataque);
+        coluna_ataque--;
+
+        if(coluna_ataque<0||coluna_ataque>o-1){ //Verifica se digitou uma coluna valida
+            printf("Voce digitou uma coluna inexistente.\n");
+            return 1;
+        }
         
-        for(j=0;j<num_navio;j++){
-            if(r==n_c[j]){
-                rep=1;
-                continue;
-            }
-        }
-        if(rep){
-            rep=0;
-            i--;
-        }
-        else{
-            n_c[qtd_num_rand]=r;
-            qtd_num_rand++;
-        }
-    }
-
-    qtd_num_rand=0;                 //Retorna o valor 0 inicial para a variavel auxiliar para sorteio de numeros aleatorios
-
-    for(i=0;i<num_navio;i++){       //Sorteia 3 numeros para a linha dos navios
-        r=(rand()%5)+1;
-
-        for(j=0;j<num_navio;j++){
-            if(r==n_l[j]){
-                rep=1;
-                continue;
-            }
-        }
-        if(rep){
-            rep=0;
-            i--;
-        }
-        else{
-            n_l[qtd_num_rand]=r;
-            qtd_num_rand++;
-        }
-    }
-   
-    for(i=0;i<num_navio;i++){       //Transforma os numeros sorteados em caractere (A-E)
-        switch (n_l[i]){
-            case 1:
-                n_l[i]='A';
-                break;
-            case 2:
-                n_l[i]='B';
-                break;
-            case 3:
-                n_l[i]='C';
-                break;
-            case 4:
-                n_l[i]='D';
-                break;
-            case 5:
-                n_l[i]='E';
-                break; 
-        }
-    }
-    
-    for(i=0;i<num_navio;i++){       //Imprime na tela a localização de cada navio
-        printf("(%c,%d)  ",n_l[i],n_c[i]);
-    }
-    return 8; 
-
-    printf("\nInsira a linha que deseja atacar(de A-E): "); //Captura a linha que o usuario deseja atacar
+        printf("Insira a linha que deseja atacar: ");
         scanf(" %c",&linha_ataque);
-        linha_ataque= toupper(linha_ataque);
+        linha_ataque=toupper(linha_ataque);
 
-            if(linha_ataque>'E'||linha_ataque<'A'){
-                printf("Voce digitou uma linha inexistente.\n");
-                return 3;
+        if(linha_ataque<65||linha_ataque>o+64){//Verifica se digitou uma linha valida
+            printf("Voce digitou uma linha inexistente.\n");
+            return 1;
+        }
+        
+        else{  //Transforma o caractere digitado em um numero inteiro
+            linha='@';
+            for(i=0;i<o;i++){
+                linha++;
+                if(linha_ataque==linha){
+                    linha_ataque_1=i;
+                    i=o-1;
+                    linha='A';
+                }
             }
+        }
+        
+        //Verifica se o tiro ja foi dado nesta casa
+        if((oceano[linha_ataque_1][coluna_ataque]=='W')||(oceano[linha_ataque_1][coluna_ataque]=='*'))
+            printf("\nVoce ja atacou esta casa do oceano. Tente novamente.\n\n");
+        
+        else{   //Verifica se acertou um submarino
+            dest=0;
+            sub=0;//Condicao iniciao para o proximo while
+            qtd_tor--;
+            while(sub<s){   //Verifica se acertou um submarino
+                if((i_1[sub]==linha_ataque_1)&&(j_1[sub]==coluna_ataque)){
+                    printf("\n\n\n\nVoce afundou uma nave!\n\n");
+                    oceano[linha_ataque_1][coluna_ataque]='*';
+                    acerto++;
+                    qtd_sub--;
+                }
+                sub++;
+            }
+            if(acerto==0){
+                while(dest<d){
+                    if(dir_dest[dest]==0){
+                        if((i_2[dest]==linha_ataque_1)&&(j_2[dest]==coluna_ataque)){
+                            oceano[linha_ataque_1][coluna_ataque]='*';
+                            acerto++;
+                            if((oceano[i_2[dest]+1][j_2[dest]]=='*')||(oceano[i_2[dest]-1][j_2[dest]]=='*')){
+                                qtd_dest--;
+                                printf("\n\n\n\nVoce afundou um destruidor!!\n\n");
+                            }
+                            else{
+                                printf("\n\n\n\nVoce acertou parte de um destruidor!!\n\n");
+                            }
+                        }
+                    }
+                    else if (dir_dest!=0){
+                        if((i_2[dest]==linha_ataque_1)&&(j_2[dest]==coluna_ataque)){
+                            oceano[linha_ataque_1][coluna_ataque]='*';
+                            acerto++;
 
-    printf("\nInsira a coluna que deseja atacar(de 1-5): "); //Captura a coluna que o usuario deseja atacar
-            scanf("%d",&coluna_ataque);
-    
-            if(coluna_ataque>5||coluna_ataque<1){
-                printf("Voce digitou uma coluna inexistente.\n");
-                return 5;
+                            if((oceano[i_2[dest]][j_2[dest]+1]=='*')||(oceano[i_2[dest]][j_2[dest]-1]=='*')){
+                                qtd_dest--;
+                                printf("\n\n\n\nVoce afundou um destruidor!!\n\n"); 
+                            }
+                            else
+                            printf("\n\n\n\nVoce acertou parte de um destruidor!!\n\n");
+                        }
+                    }
+                    dest++;
+                }
             }
-
-    printf("      1   2   3   4   5\n");
-    for (i=0;i<=o;i++){
-        printf("    +---+---+---+---+---+\n");
-        if(i<o)
-            printf("%c   ",c);
-        c++;
-        for (j=0;j<o&&i<o;j++){
-            if(j==coluna_ataque-1&&c==linha_ataque+1){
-                printf("| W ");
+            if(acerto==0){  //Caso nao acerte nenhuma nave
+                oceano[linha_ataque_1][coluna_ataque]='W';
+                printf("\n\n\n\nSeu torpedo se perdeu na agua!\n\n");
             }
-            else{
-                 printf("|   ");
-            }
+            
+            acerto=0;
 
         }
-            if(i<o)
-            printf("|\n");
+    } while((qtd_tor!=0)&&((qtd_dest!=0)||(qtd_sub!=0))); //Estabelece as condicoes de fim de jogo
+    
+    for(i=0;i<=o;i++){//Imprime o oceano final na tela, contendo as informacoes de tiros e navios afundados
+            if(i==0){
+                printf(" ");
+                for(h=0;h<o;h++){
+                    if(h==o-1)
+                        printf("   %d\n",h+1);
+                    else 
+                        printf("   %d",h+1);
+                }
+            }
+            printf("  ");
+            for(k=0;k<o;k++){
+                printf("+---");
+                if(k==o-1){
+                    printf("+");
+                }
+            }
+            printf("\n");
+            if(i!=o){
+                printf("%c ",linha);
+                linha++;
+                for(j=0;j<o;j++){
+                    printf("| %c ",oceano[i][j]);
+                    if(j==o-1)
+                        printf("|");
+                }
+            }
+            printf("\n");
+        }
+    printf("Destruidores: %d\nSubmarinos:   %d\nTorpedos:     %d\n\n",qtd_sub,qtd_dest,qtd_tor);
+    
+    if(qtd_tor==0){//Verifica qual foi a condicao para o jogo ter acabado
+        if((qtd_sub==0)&&(qtd_dest==0)){
+            printf("\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
+            return 1;   //Fim de jogo por finalizacao dos navios
+        }
+        else {
+            printf("\n\nVoce perdeu o jogo :(\nAcabaram todos os seus torpedos.\n");
+            return 2;   //Fim de jogo por falta de torpedos
+        }
     }
     
-	return 0;  //Encerra o programa e retorna o valor 0
+    else if((qtd_sub==0)&&(qtd_dest==0)){//Verifica qual foi a condicao para o jogo ter acabado
+        printf("\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
+        return 1;   //Fim de jogo por finalizacao dos navios
+    }
+
+    return 0;  //Encerra o programa e retorna o valor 0
 }
