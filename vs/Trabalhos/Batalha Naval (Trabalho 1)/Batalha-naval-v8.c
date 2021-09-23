@@ -29,7 +29,7 @@ int main()
     char linha_ataque=' ';  //Linha que o usuario deseja atacar
     int linha_ataque_1=0;   //Linha que o usuario deseja atacar 
     int acerto=0;   //Determina se o usuario acertou o disparo
-    
+    //ATACAR DESTRUIDOR
     for (i=0;i<o;i++){  //Define o estado inicial da matriz como um espaco vazio
         for(j=0;j<o;j++){
             oceano[i][j]=' ';
@@ -156,93 +156,22 @@ int main()
             printf("Voce digitou uma linha inexistente.\n");
             return 1;
         }
+        
         else{  //Transforma o caractere em um numero inteiro
-            switch(linha_ataque){
-                case 'A': 
-                    linha_ataque_1=0;
-                    break;
-                case 'B': 
-                    linha_ataque_1=1;
-                    break;
-                case 'C': 
-                    linha_ataque_1=2;
-                    break;
-                case 'D': 
-                    linha_ataque_1=3;
-                    break;
-                case 'E': 
-                    linha_ataque_1=4;
-                    break;
-                case 'F': 
-                    linha_ataque_1=5;
-                    break;
-                case 'G': 
-                    linha_ataque_1=6;
-                    break;
-                case 'H': 
-                    linha_ataque_1=7;
-                    break;
-                case 'I': 
-                    linha_ataque_1=8;
-                    break;
-                case 'J': 
-                    linha_ataque_1=9;
-                    break;
-                case 'K': 
-                    linha_ataque_1=10;
-                    break;
-                case 'L': 
-                    linha_ataque_1=11;
-                    break;
-                case 'M': 
-                    linha_ataque_1=12;
-                    break;
-                case 'N': 
-                    linha_ataque_1=13;
-                    break;
-                case 'O': 
-                    linha_ataque_1=14;
-                    break;
-                case 'P': 
-                    linha_ataque_1=15;
-                    break;
-                case 'Q': 
-                    linha_ataque_1=16;
-                    break;
-                case 'R': 
-                    linha_ataque_1=17;
-                    break;
-                case 'S': 
-                    linha_ataque_1=18;
-                    break;
-                case 'T': 
-                    linha_ataque_1=19;
-                    break;
-                case 'U': 
-                    linha_ataque_1=20;
-                    break;
-                case 'V': 
-                    linha_ataque_1=21;
-                    break;
-                case 'W': 
-                    linha_ataque_1=22;
-                    break;
-                case 'X': 
-                    linha_ataque_1=23;
-                    break;
-                case 'Y': 
-                    linha_ataque_1=24;
-                    break; 
-                case 'Z': 
-                    linha_ataque_1=25;
-                    break;   
+            linha='@';
+            for(i=0;i<o;i++){
+                linha++;
+                if(linha_ataque==linha){
+                    linha_ataque_1=i;
+                    i=o-1;
+                    linha='A';
+                }
             }
         }
         //Verifica se o tiro ja foi dado nesta casa
-        if((oceano[linha_ataque_1][coluna_ataque]=='W')||(oceano[linha_ataque_1][coluna_ataque]=='*')){
-            printf("\nVoce ja atacou esta casa do oceano. Tente novamente.\n");
-
-        }
+        if((oceano[linha_ataque_1][coluna_ataque]=='W')||(oceano[linha_ataque_1][coluna_ataque]=='*'))
+            printf("\nVoce ja atacou esta casa do oceano. Tente novamente.\n\n");
+        
         else{
             sub=0;//Condicao iniciao para o proximo while
             qtd_tor--;
