@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"time.h": "c"
+		},
+		"files.exclude": {
+			"**/*.exe": true,
+			"workspace.code-workspace": true,
+			"**/.vscode": true
+		}
+	}
+}
