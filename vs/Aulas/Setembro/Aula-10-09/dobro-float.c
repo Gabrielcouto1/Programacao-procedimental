@@ -31,7 +31,6 @@ int main()
                 n[i]='.';
             }
         }
-
         else if (isdigit (n[i])==0){
             err=1;
         }
