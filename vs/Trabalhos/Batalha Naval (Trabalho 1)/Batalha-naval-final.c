@@ -14,7 +14,7 @@ const int MD=CORR;     //Variavel MD que dira se o programa sera jogado(PLAY) ou
 
 int main()
 {
-    if(((t<=0)||(d<0)||(s<0))||(d==0)&&(s==0)){//Caso tenha algum erro de declaracao de variavel antes da main()
+    if(((t<=0)||(d<0)||(s<0))||((d==0)&&(s==0))){//Caso tenha algum erro de declaracao de variavel antes da main()
         printf("\n\nO valor de elementos(Torpedos,Destruidores,Submarinos) inseridos no inicio do programa eh invalido.\n\n");
         return 3;   //Retorna o valor 3, indicando erro de declaracao de variavel antes da funcao main.
     }
@@ -112,16 +112,8 @@ int main()
         printf("Destruidores: %d\nSubmarinos:   %d\nTorpedos:     %d\n\n",qtd_dest,qtd_sub,qtd_tor);
         linha='A';
 
-        printf("Insira a coluna que deseja atacar: ");
-        scanf("%d",&coluna_ataque);
-        coluna_ataque--;
 
-        if(coluna_ataque<0||coluna_ataque>o-1){ //Verifica se digitou uma coluna valida
-            printf("Voce digitou uma coluna inexistente.\n");
-            return 1;
-        }
-        
-        printf("Insira a linha que deseja atacar: ");
+        printf("Insira a linha que deseja atacar(A-E): ");
         scanf(" %c",&linha_ataque);
         linha_ataque=toupper(linha_ataque);
 
@@ -140,6 +132,15 @@ int main()
                     linha='A';
                 }
             }
+        }
+
+        printf("Insira a coluna que deseja atacar(1-5): ");
+        scanf("%d",&coluna_ataque);
+        coluna_ataque--;
+
+        if(coluna_ataque<0||coluna_ataque>o-1){ //Verifica se digitou uma coluna valida
+            printf("Voce digitou uma coluna inexistente.\n");
+            return 1;
         }
         
         //Verifica se o tiro ja foi dado nesta casa
@@ -232,7 +233,7 @@ int main()
             }
             printf("\n");
         }
-    printf("Destruidores: %d\nSubmarinos:   %d\nTorpedos:     %d\n\n",qtd_sub,qtd_dest,qtd_tor);
+    printf("Destruidores: %d\nSubmarinos:   %d\nTorpedos:     %d\n\n",qtd_dest,qtd_sub,qtd_tor);
     
     if(qtd_tor==0){//Verifica qual foi a condicao para o jogo ter acabado
         if((qtd_sub==0)&&(qtd_dest==0))
