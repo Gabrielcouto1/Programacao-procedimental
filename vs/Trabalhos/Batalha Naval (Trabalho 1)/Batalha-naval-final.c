@@ -41,7 +41,7 @@ int main()
         }
     }
 
-	while(sub<s){ //Determina a posicao dos submarinos
+	while(sub<s){ //Determina a posicao dos submarinos pseudo-aleatoriamente
         i_1[sub]=rand()%o;
         j_1[sub]=rand()%o;
         if(oceano[i_1[sub]][j_1[sub]]==' '){
@@ -51,7 +51,7 @@ int main()
         }
     }
 
-    while (dest<d){//Determina a posicao dos destruidores
+    while (dest<d){//Determina a posicao dos destruidores pseudo-aleatoriamente
         i_2[dest]=rand()%o;
         j_2[dest]=rand()%o;
         dir_dest[dest]=rand()%2;
@@ -113,7 +113,7 @@ int main()
         linha='A';
 
 
-        printf("Insira a linha que deseja atacar(A-E): ");
+        printf("Insira o setor que deseja atacar(ex: A1): ");
         scanf(" %c",&linha_ataque);
         linha_ataque=toupper(linha_ataque);
 
@@ -133,8 +133,6 @@ int main()
                 }
             }
         }
-
-        printf("Insira a coluna que deseja atacar(1-5): ");
         scanf("%d",&coluna_ataque);
         coluna_ataque--;
 
@@ -147,7 +145,7 @@ int main()
         if((oceano[linha_ataque_1][coluna_ataque]=='W')||(oceano[linha_ataque_1][coluna_ataque]=='*'))
             printf("\nVoce ja atacou esta casa do oceano. Tente novamente.\n\n");
         
-        else{   //Verifica se acertou um submarino
+        else{   //Verifica se acertou uma nave
             dest=0;//Condicao iniciao para o proximo while
             sub=0; //Condicao iniciao para o proximo while
             qtd_tor--;
