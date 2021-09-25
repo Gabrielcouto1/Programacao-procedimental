@@ -30,7 +30,7 @@ const int s=3;  //Quantidade de submarinos que serao gerados aleatoriamente
 const int d=0;  //Quantidade de destruidores que serao gerados aleatoriamente
 const int t=6;  //Quantidade de torpedos que o usuario podera disparar
 
-const int MD=CORR;     //Variavel MD que dira se o programa sera jogado(PLAY) ou corrigido(CORR)
+const int MD=PLAY;     //Variavel MD que dira se o programa sera jogado(PLAY) ou corrigido(CORR)
 
 int main()
 {
@@ -55,6 +55,7 @@ int main()
     char linha_ataque=' ';  //Linha que o usuario deseja atacar
     int linha_ataque_1=0;   //Linha que o usuario deseja atacar 
     int acerto=0;   //Determina se o usuario acertou o disparo
+    
     for (i=0;i<o;i++){  //Define o estado inicial da matriz como um espaco vazio
         for(j=0;j<o;j++){
             oceano[i][j]=' ';
@@ -69,7 +70,7 @@ int main()
             if(MD==CORR)//Escreve na tela a posicao do submarino se o modo de correcao eh ativado
                 oceano[i_1[sub]][j_1[sub]]='S';
 
-            //Estabelece que as casas coladas com a sorteada nao podem ser ocupadas por outro submarino
+            //Estabelece que as casas adjacentes com a sorteada nao podem ser ocupadas por outro submarino
             rep[i_1[sub]][j_1[sub]]=1;
             rep[i_1[sub]-1][j_1[sub]-1]=1;
             rep[i_1[sub]-1][j_1[sub]]=1;
