@@ -25,12 +25,14 @@ Fabricio Ishizuka - 12021BCC033
 #define PLAY 0  //Definicao de "PLAY" para alterar facilmente o modo de execucao do codigo
 #define CORR 1  //Definicao de "CORR" para alterar facilmente o modo de execucao do codigo
 
-const int o=5;  //Tamanho da matriz que apresenta o oceano  
-const int s=3;  //Quantidade de submarinos que serao gerados aleatoriamente
-const int d=0;  //Quantidade de destruidores que serao gerados aleatoriamente
+const int o=5;  //Ordem da matriz que apresenta o oceano  
+const int d=0;  //Quantidade de destruidores que serao gerados pseudo-aleatoriamente
+const int s=3;  //Quantidade de submarinos que serao gerados pseudo-aleatoriamente
 const int t=6;  //Quantidade de torpedos que o usuario podera disparar
 
+
 const int MD=PLAY;     //Variavel MD que dira se o programa sera jogado(PLAY) ou corrigido(CORR)
+
 
 int main()
 {
@@ -185,7 +187,7 @@ int main()
             while(sub<s){   //Verifica se acertou um submarino
                 if((i_1[sub]==linha_ataque_1)&&(j_1[sub]==coluna_ataque)){
                     oceano[linha_ataque_1][coluna_ataque]='*';
-                    acerto++;
+                    acerto++;//Caso tenha acertado um submarino
                 }
                 sub++;
             }
@@ -196,15 +198,15 @@ int main()
                         oceano[linha_ataque_1][coluna_ataque]='*';
                         if(dir_dest[dest]==0){
                             if((oceano[linha_ataque_1+1][coluna_ataque]=='*')||(oceano[linha_ataque_1-1][coluna_ataque]=='*'))
-                                acerto=3;
+                                acerto=3;//Caso tenha acertado a segunda parte de um destruidor
                             else
-                                acerto=2;  
+                                acerto=2; //Caso tenha acertado a primeira parte de um destruidor
                         }
                         else if(dir_dest[dest]!=0){
                             if((oceano[linha_ataque_1][coluna_ataque+1]=='*')||(oceano[linha_ataque_1][coluna_ataque-1]=='*'))
-                                acerto=3;
+                                acerto=3;//Caso tenha acertado a segunda parte de um destruidor
                             else
-                                acerto=2;
+                                acerto=2;//Caso tenha acertado a primeira parte de um destruidor
                         }
                     }
                     dest++;
@@ -213,20 +215,24 @@ int main()
             
             switch(acerto){//Verifica se acertou um destruidor ou um submarino ou se errou
                 case 0:
+                    printf("---------------------------------------------------------------\n\n");
                     printf("\n\n\n\nSeu torpedo se perdeu na agua!\n\n");
                     oceano[linha_ataque_1][coluna_ataque]='W';
                     acerto=0;
                     break;
-                case 1:
+                case 1://Caso tenha acertado um submarino
+                    printf("---------------------------------------------------------------\n\n");
                     printf("\n\n\n\nVoce afundou uma nave!\n\n");
                     qtd_sub--;
                     acerto=0;
                     break;
-                case 2:
+                case 2://Caso tenha acertado a primeira parte de um destruidor
+                    printf("---------------------------------------------------------------\n\n");
                     printf("\n\n\n\nVoce afundou uma parte de um destruidor!\n\n");
                     acerto=0;
                     break;
-                case 3:
+                case 3://Caso tenha acertado a segunda parte de um destruidor
+                    printf("---------------------------------------------------------------\n\n");
                     printf("\n\n\n\nVoce afundou um destruidor!!\n\n");
                     acerto=0;
                     qtd_dest--;
