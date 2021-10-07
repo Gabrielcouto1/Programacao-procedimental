@@ -51,20 +51,23 @@ getStr
 A funcao getStr captura um numero que sera inserido pelo usuario
 e em seguida verifica se o usuario digitou mais algarismos que 
 o MAX preestabelecido. Se o maximo for excedido, retorna o valor 0.
-Se o maximo nao for excedido, retorna o valor 1 e a funcao main continua.
+Se o maximo nao for excedido, retorna o valor 1.
 */
 int getStr(char s[MAX])
 {
     int i;  //Variavel utilizada no for para captura dos elementos da string
+
     for(i=0;i<MAX;i++){
         scanf("%c",&s[i]);
         if(s[i]=='\n')  //No momento que o usuario digita enter, a captura cessa
             break;
     }
+    
     if(i==MAX)  //Se o contador tem o mesmo valor de MAX, indica que o usuario digitou mais algarismos que o permitido
         return 0;   //O programa encerra
-    else    
-        return 1;  //Senao, o programa continua normalmente
+
+    s[i]='\0';   
+    return 1;  //Senao, o programa continua normalmente
 }
 /*
 isIntnum
@@ -78,27 +81,12 @@ o valor 1 e a funcao main continua.
 */
 int isIntnum (char s[MAX])
 {
-    int i=0; //Variavel usadas no contador
-    int err=0;  //Variavel utilizada para saber se existe um digito que nao eh um numero inteiro
+    int i=((s[0=='-'])||(s[0]=='+'))? 1:0;
 
-    if((s[0]=='-'||s[0]=='+'))//Verifica se o primeiro elemento eh um sinal '-' ou '+'
-        i=1;
-    else 
-        i=0;
+    for(;s[i]!='\0';i++){
+        if(isdigit(s[i)==0)
+            return 0;
+    }
     
-    for(i=i;i<MAX;i++){//Verifica se o que foi digitado eh um numero inteiro
-        if(isdigit(s[i])==0){
-            if((s[i]!=0)&&(s[i])!='\n'){
-                err++;
-                break;
-                }
-            else 
-                continue;
-        }
-    }
-    if(err==0){     //Caso nao tenha erros, a funcao main ira continuar normalmente
-        return 1;
-    }
-    else if(err)    //Caso tenha erros, a funcao main ira encerrar
-        return 0;
+    return 1;
 }
