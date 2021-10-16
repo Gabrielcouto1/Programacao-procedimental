@@ -30,9 +30,7 @@ const int d=0;  //Quantidade de destruidores que serao gerados pseudo-aleatoriam
 const int s=3;  //Quantidade de submarinos que serao gerados pseudo-aleatoriamente
 const int t=6;  //Quantidade de torpedos que o usuario podera disparar
 
-
-const int MD=PLAY;     //Variavel MD que dira se o programa sera jogado(PLAY) ou corrigido(CORR)
-
+const int MD=CORR;     //Variavel MD que dira se o programa sera jogado(PLAY) ou corrigido(CORR)
 
 int main()
 {
