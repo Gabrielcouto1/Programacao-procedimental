@@ -19,4 +19,3 @@ void calc_imc(float peso, float altura)
     else   
         printf("\nObesidade.\n\n");
 }
-

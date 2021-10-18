@@ -13,6 +13,10 @@ int main(int argc,char *argv[])
 {
     
     if (argc>1){
+        if(argc<3){
+            fprintf(stderr,"\nFaltam argumentos.\nDigite o peso e a altura.\n");
+            return 3;
+        }
         float p=0;
         float a=0;
 
@@ -47,4 +51,3 @@ void calc_imc(float peso, float altura)
     else   
         printf("\nObesidade.\n\n");
 }
-
