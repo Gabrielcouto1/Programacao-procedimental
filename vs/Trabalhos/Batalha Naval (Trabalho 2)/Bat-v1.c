@@ -21,28 +21,49 @@ Fabricio Ishizuka - 12021BCC033
 #include <stdio.h> //Inclusao de biblioteca de funcoes basicas em C
 #include <stdlib.h> //Inclusao de biblioteca de funcoes basicas em C
 #include <ctype.h> //Inclusao de biblioteca para utilizacao de toupper, afim de reduzir erros do usuario   
+#include <string.h>
 #include "Bat.h"
 
 #define PLAY 0  //Definicao de "PLAY" para alterar facilmente o modo de execucao do codigo
 #define CORR 1  //Definicao de "CORR" para alterar facilmente o modo de execucao do codigo
 
-const int o=5;  //Ordem da matriz que apresenta o oceano  
-const int d=0;  //Quantidade de destruidores que serao gerados pseudo-aleatoriamente
-const int s=3;  //Quantidade de submarinos que serao gerados pseudo-aleatoriamente
-
-const int MD=CORR;     //Variavel MD que dira se o programa sera jogado(PLAY) ou corrigido(CORR)
+//FAZER A SUBMARINESINTOOCEAN, MEXER NAS LINHAS 43-56(FAZER UMA FUNC PRA ISSO)
+//CRIAR FUNCAO PARA VERIFICAR SE O ATAQUE DIGITADO EH VALIDO
+//CRIAR FUNCAO PARA VERIFICAR ATAQUES, CRIAR FUNCAO PARA VERIFICAR CONDICAO DE FIM DE JOGO
 
 int main(int argc, char *argv[])
 {
     int t=0;
-    argsOk(argc,argv);
+    int MD=0;
+    int err=0;
+    err=argsOk(argc,argv);
+
+    if(err!=0){
+        errorMSG(err);
+        return 0;
+    }
+
+    if(strcmp(argv[1],"-t")==0){
+        t=atoi(argv[2]);
+        if(strcmp(argv[4],"PLAY")==0)
+            MD=PLAY;
+        else 
+            MD=CORR;
+    }
+    else if(strcmp(argv[3],"-t")==0){
+        t=atoi(argv[4]);
+        if(strcmp(argv[2],"PLAY")==0)
+            MD=PLAY;
+        else 
+            MD=CORR;
+    }
+       
+    char rep[o][o];
     char oceano[o][o];  //Matriz oceano de ordem "o" preestabelecida
     int i;    //Contadores usados para imprimir a matriz na tela
     char linha= 'A'; //Variavel usada para imprimir a letra das linhas na tela
     int sub=0;  //Contador usado para determinar a posicao dos submarinos
-    int dest=0; //Contador usado para determinar a posicao dos destruidores
     int i_1[s],j_1[s];                //Armazenam a posicao dos submarinos
-    int rep[o][o];  //Matriz que armazena a diagonal dos numeros sorteados pros submarinos
     int q_d=d; //Qtd de destruidores restantes
     int q_s=s;  //Qtd de submarinos restantes
     int q_t=t;  //Qtd de torpedos restantes
@@ -51,8 +72,29 @@ int main(int argc, char *argv[])
     int linha_ataque_1=0;   //Linha que o usuario deseja atacar 
     int acerto=0;   //Determina se o usuario acertou o disparo
 
-	submarinesIntoOcean(oceano);
     initOcean(oceano);
+    initOcean(rep);
+    while(sub<s){ //Determina a posicao dos submarinos pseudo-aleatoriamente
+        i_1[sub]=rand()%o;
+        j_1[sub]=rand()%o;
+        if((rep[i_1[sub]][j_1[sub]]==' ')){//Verifica se a casa sorteada eh apta a receber um submarino
+            if(MD==CORR)//Escreve na tela a posicao do submarino se o modo de correcao eh ativado
+                oceano[i_1[sub]][j_1[sub]]='S';
+
+            //Estabelece que as casas adjacentes com a sorteada nao podem ser ocupadas por outro submarino
+            rep[i_1[sub]][j_1[sub]]=1;
+            rep[i_1[sub]-1][j_1[sub]-1]=1;
+            rep[i_1[sub]-1][j_1[sub]]=1;
+            rep[i_1[sub]-1][j_1[sub]+1]=1;
+            rep[i_1[sub]][j_1[sub]-1]=1;
+            rep[i_1[sub]][j_1[sub]+1]=1;
+            rep[i_1[sub]+1][j_1[sub]-1]=1;
+            rep[i_1[sub]+1][j_1[sub]]=1;
+            rep[i_1[sub]+1][j_1[sub]+1]=1;
+            sub++;
+        }    
+    }
+    showOcean(oceano);
     showInventory(q_d,q_s,q_t);
 
     do{  //O usuario atira e o programa retorna o oceano atualizado
@@ -90,7 +132,6 @@ int main(int argc, char *argv[])
         
         
         else{   //Verifica se acertou uma nave
-            dest=0;//Condicao iniciao para o proximo while
             sub=0; //Condicao iniciao para o proximo while
             q_t--;
             while(sub<s){   //Verifica se acertou um submarino
@@ -102,24 +143,7 @@ int main(int argc, char *argv[])
             }
             
             if(acerto==0){  //Verifica se acertou um destruidor, apenas se nao acertar um submarino
-                while(dest<d){ //Verifica se acertou um destruidor
-                    if(((i_2[dest]==linha_ataque_1)&&(j_2[dest]==coluna_ataque))||((i_3[dest]==linha_ataque_1)&&(j_3[dest]==coluna_ataque))){
-                        oceano[linha_ataque_1][coluna_ataque]='*';
-                        if(dir_dest[dest]==0){
-                            if((oceano[linha_ataque_1+1][coluna_ataque]=='*')||(oceano[linha_ataque_1-1][coluna_ataque]=='*'))
-                                acerto=3;//Caso tenha acertado a segunda parte de um destruidor
-                            else
-                                acerto=2; //Caso tenha acertado a primeira parte de um destruidor
-                        }
-                        else if(dir_dest[dest]!=0){
-                            if((oceano[linha_ataque_1][coluna_ataque+1]=='*')||(oceano[linha_ataque_1][coluna_ataque-1]=='*'))
-                                acerto=3;//Caso tenha acertado a segunda parte de um destruidor
-                            else
-                                acerto=2;//Caso tenha acertado a primeira parte de um destruidor
-                        }
-                    }
-                    dest++;
-                }
+                
             }
             
             switch(acerto){//Verifica se acertou um destruidor ou um submarino ou se errou
@@ -134,17 +158,6 @@ int main(int argc, char *argv[])
                     printf("\n\n\n\nVoce afundou uma nave!\n\n");
                     q_s--;
                     acerto=0;
-                    break;
-                case 2://Caso tenha acertado a primeira parte de um destruidor
-                    printf("---------------------------------------------------------------\n\n");
-                    printf("\n\n\n\nVoce afundou uma parte de um destruidor!\n\n");
-                    acerto=0;
-                    break;
-                case 3://Caso tenha acertado a segunda parte de um destruidor
-                    printf("---------------------------------------------------------------\n\n");
-                    printf("\n\n\n\nVoce afundou um destruidor!!\n\n");
-                    acerto=0;
-                    q_d--;
                     break;
             }
         }
@@ -161,52 +174,73 @@ int main(int argc, char *argv[])
     
     else if((q_s==0)&&(q_d==0))//Verifica qual foi a condicao para o jogo ter acabado
         printf("\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
+
     return 0;  //Encerra o programa e retorna o valor 0
 }
 int argsOk(int argc, char *argv[])
 {
-    
+    char isint=' ';
+    if(argc>5)
+        return 3;
+    else if(argc<5)
+        return 5;
+    else if((strcmp(argv[1],"-t")!=0)&&(strcmp(argv[1],"-m")!=0))
+        return 7;
+    else if((strcmp(argv[3],"-t")!=0)&&(strcmp(argv[3],"-m")!=0))
+        return 7;
+    else if((strcmp(argv[1],"-t")==0)&&(strcmp(argv[3],"-m")==0)){
+        isint=*argv[2];
+        if(isdigit(isint)==0)
+            return 9;
+        else if((strcmp(argv[4],"PLAY")!=0)&&(strcmp(argv[4],"CORR")!=0))
+            return 11;   
+    }
+    else if((strcmp(argv[3],"-t")==0)&&(strcmp(argv[1],"-m")==0)){
+        isint=*argv[4];
+        if(isdigit(isint)==0)
+            return 9;
+        else if((strcmp(argv[2],"PLAY")!=0)&&(strcmp(argv[2],"CORR")!=0))
+            return 11;
+    }
+    else 
+        return 0;
+}
+void errorMSG(int x)
+{
+    switch (x){
+        case 3:
+            fprintf(stderr,"\nVoce digitou mais argumentos que 5.\n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6 \n");
+            break;
+        case 5:
+            fprintf(stderr,"\nVoce digitou menos argumentos que 5.\n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6 \n");
+            break;
+        case 7:
+            fprintf(stderr,"\nVoce nao digitou a identificacao dos argumentos (-t ou -m).\n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6 \n");
+            break;
+        case 9:
+            fprintf(stderr,"\nO argumento que indica a quantidade de torpedos nao foi um numero inteiro.\n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6 \n");
+            break;
+        case 11:
+            fprintf(stderr,"\nO argumento que inserido que indica o modo de jogo nao foi PLAY ou CORR.\n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6 \n");
+            break;
+        case 0:
+            break;
+    }
+       
 }
 void initOcean(char ocean[o][o])
 {
-    int i,j,k,h;
-    char linha='A';
-
-    for (i=0;i<o;i++){  //Define o estado inicial da matriz como um espaco vazio
-        for(j=0;j<o;j++){
+    int i,j;
+    for (i=0;i<=o;i++){  //Define o estado inicial da matriz como um espaco vazio
+        for(j=0;j<=o;j++){
             ocean[i][j]=' ';
         }
     }
-
-    for(i=0;i<=o;i++){//Imprime o oceano final na tela, contendo as informacoes de tiros e navios afundados
-            if(i==0){
-                printf(" ");
-                for(h=0;h<o;h++){
-                    if(h==o-1)
-                        printf("   %d\n",h+1);
-                    else 
-                        printf("   %d",h+1);
-                }
-            }
-            printf("  ");
-            for(k=0;k<o;k++){
-                printf("+---");
-                if(k==o-1){
-                    printf("+");
-                }
-            }
-            printf("\n");
-            if(i!=o){
-                printf("%c ",linha);
-                linha++;
-                for(j=0;j<o;j++){
-                    printf("| %c ",ocean[i][j]);
-                    if(j==o-1)
-                        printf("|");
-                }
-            }
-            printf("\n");
-        }
 }
 void showOcean(char ocean[o][o])
 {
@@ -247,10 +281,6 @@ void showInventory(int d, int s, int t)
 {
     printf("Destruidores: %d\nSubmarinos:   %d\nTorpedos:     %d\n\n",d,s,t);
 }
-void submarinesSpacing(char rep[o][o])
-{
-
-}
 void submarinesIntoOcean (char ocean[o][o])
 {
     int i,j;
@@ -267,24 +297,6 @@ void submarinesIntoOcean (char ocean[o][o])
             
         } 
 
-    while(sub<s){ //Determina a posicao dos submarinos pseudo-aleatoriamente
-        i_1[sub]=rand()%o;
-        j_1[sub]=rand()%o;
-        if((rep[i_1[sub]][j_1[sub]]==0)){//Verifica se a casa sorteada eh apta a receber um submarino
-            if(MD==CORR)//Escreve na tela a posicao do submarino se o modo de correcao eh ativado
-                ocean[i_1[sub]][j_1[sub]]='S';
-
-            //Estabelece que as casas adjacentes com a sorteada nao podem ser ocupadas por outro submarino
-            rep[i_1[sub]][j_1[sub]]=1;
-            rep[i_1[sub]-1][j_1[sub]-1]=1;
-            rep[i_1[sub]-1][j_1[sub]]=1;
-            rep[i_1[sub]-1][j_1[sub]+1]=1;
-            rep[i_1[sub]][j_1[sub]-1]=1;
-            rep[i_1[sub]][j_1[sub]+1]=1;
-            rep[i_1[sub]+1][j_1[sub]-1]=1;
-            rep[i_1[sub]+1][j_1[sub]]=1;
-            rep[i_1[sub]+1][j_1[sub]+1]=1;
-            sub++;
-        }    
-    }
+    
+    
 }
