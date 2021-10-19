@@ -24,7 +24,6 @@ Fabricio Ishizuka - 12021BCC033
 #include <string.h>
 #include "Bat.h"
 
-//MEXER NAS LINHAS 43-56(FAZER UMA FUNC PRA ISSO)
 //CRIAR FUNCAO PARA VERIFICAR SE O ATAQUE DIGITADO EH VALIDO
 //CRIAR FUNCAO PARA VERIFICAR ATAQUES, CRIAR FUNCAO PARA VERIFICAR CONDICAO DE FIM DE JOGO
 
@@ -40,20 +39,8 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if(strcmp(argv[1],"-t")==0){
-        t=atoi(argv[2]);
-        if(strcmp(argv[4],"PLAY")==0)
-            MD=PLAY;
-        else 
-            MD=CORR;
-    }
-    else if(strcmp(argv[3],"-t")==0){
-        t=atoi(argv[4]);
-        if(strcmp(argv[2],"PLAY")==0)
-            MD=PLAY;
-        else 
-            MD=CORR;
-    }
+    MD=argMD(argv);
+    t=argT(argv);
        
     char rep[o][o];
     char oceano[o][o];  //Matriz oceano de ordem "o" preestabelecida
@@ -293,4 +280,32 @@ void showSubmarines(char rep[o][o], char ocean[o][o])
         for(j=0;j<o;j++)
             if(rep[i][j]=='2')
                 ocean[i][j]='S';
+}
+int argMD(char *argv[])
+{
+    int MD=0;
+    if(strcmp(argv[1],"-t")==0){
+        if(strcmp(argv[4],"PLAY")==0)
+            MD=PLAY;
+        else 
+            MD=CORR;
+    }
+    else if(strcmp(argv[3],"-t")==0){
+        if(strcmp(argv[2],"PLAY")==0)
+            MD=PLAY;
+        else 
+            MD=CORR;
+    }
+    return MD;
+}
+int argT(char *argv[])
+{
+    int t=0;
+    if(strcmp(argv[1],"-t")==0)
+        t=atoi(argv[2]);
+
+    else if(strcmp(argv[3],"-t")==0)
+        t=atoi(argv[4]);
+
+    return t;
 }
