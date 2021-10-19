@@ -24,9 +24,6 @@ Fabricio Ishizuka - 12021BCC033
 #include <string.h>
 #include "Bat.h"
 
-#define PLAY 0  //Definicao de "PLAY" para alterar facilmente o modo de execucao do codigo
-#define CORR 1  //Definicao de "CORR" para alterar facilmente o modo de execucao do codigo
-
 //FAZER A SUBMARINESINTOOCEAN, MEXER NAS LINHAS 43-56(FAZER UMA FUNC PRA ISSO)
 //CRIAR FUNCAO PARA VERIFICAR SE O ATAQUE DIGITADO EH VALIDO
 //CRIAR FUNCAO PARA VERIFICAR ATAQUES, CRIAR FUNCAO PARA VERIFICAR CONDICAO DE FIM DE JOGO
