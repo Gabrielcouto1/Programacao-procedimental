@@ -21,6 +21,7 @@ Fabricio Ishizuka - 12021BCC033
 #include <stdio.h> //Inclusao de biblioteca de funcoes basicas em C
 #include <stdlib.h> //Inclusao de biblioteca de funcoes basicas em C
 #include <ctype.h> //Inclusao de biblioteca para utilizacao de toupper, afim de reduzir erros do usuario   
+#include "Bat.h"
 
 #define PLAY 0  //Definicao de "PLAY" para alterar facilmente o modo de execucao do codigo
 #define CORR 1  //Definicao de "CORR" para alterar facilmente o modo de execucao do codigo
@@ -28,34 +29,22 @@ Fabricio Ishizuka - 12021BCC033
 const int o=5;  //Ordem da matriz que apresenta o oceano  
 const int d=0;  //Quantidade de destruidores que serao gerados pseudo-aleatoriamente
 const int s=3;  //Quantidade de submarinos que serao gerados pseudo-aleatoriamente
-const int t=6;  //Quantidade de torpedos que o usuario podera disparar
 
 const int MD=CORR;     //Variavel MD que dira se o programa sera jogado(PLAY) ou corrigido(CORR)
 
-void initOcean(char ocean[o][o]);
-void showOcean(char ocean[o][o]);
-void showInventory(int d, int s, int t);
-void submarinesSpacing(char ocean[o][o]);
-void submarinesIntoOcean (char ocean[o][o]);
-
-int main()
+int main(int argc, char *argv[])
 {
-    if(((t<=0)||(d<0)||(s<0))||((d==0)&&(s==0))){//Caso tenha algum erro de declaracao de variaveis constantes
-        printf("\n\nO valor de elementos(Torpedos,Destruidores,Submarinos) inseridos no inicio do programa eh invalido.\n\n");
-        return 3;   //Retorna o valor 3, indicando erro de declaracao de variavel antes da funcao main.
-    }
-    
+    int t=0;
+    argsOk(argc,argv);
     char oceano[o][o];  //Matriz oceano de ordem "o" preestabelecida
-    int i,j;    //Contadores usados para imprimir a matriz na tela
+    int i;    //Contadores usados para imprimir a matriz na tela
     char linha= 'A'; //Variavel usada para imprimir a letra das linhas na tela
     int sub=0;  //Contador usado para determinar a posicao dos submarinos
     int dest=0; //Contador usado para determinar a posicao dos destruidores
     int i_1[s],j_1[s];                //Armazenam a posicao dos submarinos
     int rep[o][o];  //Matriz que armazena a diagonal dos numeros sorteados pros submarinos
-    int i_2[d],j_2[d],i_3[d],j_3[d];  //Armazenam a posicao dos destruidores
-    int dir_dest[d]; //Determina se o destruidor tera duas casas horizontais ou verticais
-    int q_s=s;  //Qtd de submarinos restantes
     int q_d=d; //Qtd de destruidores restantes
+    int q_s=s;  //Qtd de submarinos restantes
     int q_t=t;  //Qtd de torpedos restantes
     int coluna_ataque=0;    //Coluna que o usuario deseja atacar  
     char linha_ataque=' ';  //Linha que o usuario deseja atacar
@@ -173,6 +162,10 @@ int main()
     else if((q_s==0)&&(q_d==0))//Verifica qual foi a condicao para o jogo ter acabado
         printf("\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
     return 0;  //Encerra o programa e retorna o valor 0
+}
+int argsOk(int argc, char *argv[])
+{
+    
 }
 void initOcean(char ocean[o][o])
 {
