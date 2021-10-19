@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
             MD=CORR;
     }
        
-    char *rep[o][o];
+    char rep[o][o];
     char oceano[o][o];  //Matriz oceano de ordem "o" preestabelecida
     int i;    //Contadores usados para imprimir a matriz na tela
     char linha= 'A'; //Variavel usada para imprimir a letra das linhas na tela
@@ -70,8 +70,27 @@ int main(int argc, char *argv[])
     int acerto=0;   //Determina se o usuario acertou o disparo
 
     initOcean(oceano);
-    submarinesIntoOcean(rep);
-    showSubmarines(oceano,rep);
+    initOcean(rep);
+    while(sub<s){ //Determina a posicao dos submarinos pseudo-aleatoriamente
+        i_1[sub]=rand()%o;
+        j_1[sub]=rand()%o;
+        if((rep[i_1[sub]][j_1[sub]]==' ')){//Verifica se a casa sorteada eh apta a receber um submarino
+            if(MD==CORR)//Escreve na tela a posicao do submarino se o modo de correcao eh ativado
+                oceano[i_1[sub]][j_1[sub]]='S';
+
+            //Estabelece que as casas adjacentes com a sorteada nao podem ser ocupadas por outro submarino
+            rep[i_1[sub]][j_1[sub]]=1;
+            rep[i_1[sub]-1][j_1[sub]-1]=1;
+            rep[i_1[sub]-1][j_1[sub]]=1;
+            rep[i_1[sub]-1][j_1[sub]+1]=1;
+            rep[i_1[sub]][j_1[sub]-1]=1;
+            rep[i_1[sub]][j_1[sub]+1]=1;
+            rep[i_1[sub]+1][j_1[sub]-1]=1;
+            rep[i_1[sub]+1][j_1[sub]]=1;
+            rep[i_1[sub]+1][j_1[sub]+1]=1;
+            sub++;
+        }    
+    }
     showOcean(oceano);
     showInventory(q_d,q_s,q_t);
 
@@ -255,40 +274,38 @@ void showInventory(int d, int s, int t)
 {
     printf("Destruidores: %d\nSubmarinos:   %d\nTorpedos:     %d\n\n",d,s,t);
 }
-void submarinesIntoOcean (char *ocean[o][o])
+void submarinesSpacing(int rep[o][o], int i_1[s], int j_1[s], int sub)
 {
-    int i,j,i_1[s],j_1[s];
-    int sub=0;
+    int s=sub;
+    int i=i_1;
+    int j=j_1;
     
-    for (i=0;i<=o;i++){  //Define o estado inicial da matriz como um espaco vazio
-        for(j=0;j<=o;j++){
-            *ocean[i][j]=' ';
-        }
-    }
-    while (sub<s){
-        i_1[sub]=rand%o;
-        j_1[sub]=rand%o;
-
-        if((*ocean[i_1[sub]][j_1[sub]]==' ')){
-            *ocean[i_1[sub]][j_1[sub]]='2';
-            *ocean[i_1[sub]-1][j_1[sub]-1]='1';
-            *ocean[i_1[sub]-1][j_1[sub]]='1';
-            *ocean[i_1[sub]-1][j_1[sub]+1]='1';
-            *ocean[i_1[sub]][j_1[sub]-1]='1';
-            *ocean[i_1[sub]][j_1[sub]+1]='1';
-            *ocean[i_1[sub]+1][j_1[sub]-1]='1';
-            *ocean[i_1[sub]+1][j_1[sub]]='1';
-            *ocean[i_1[sub]+1][j_1[sub]+1]='1';
-            sub++;
-        }
-    }
+    rep[i[s]][j[s]]=1;
+    rep[i[s]-1][j[s]-1]=1;
+    rep[i[s]-1][j[s]]=1;
+    rep[i[s]-1][j[s]+1]=1;
+    rep[i[s]][j[s]-1]=1;
+    rep[i[s]][j[s]+1]=1;
+    rep[i[s]+1][j[s]-1]=1;
+    rep[i[s]+1][j[s]]=1;
+    rep[i[s]+1][j[s]+1]=1;
 }
-void showSubmarines(char ocean[o][o], char *rep[o][o])
+void submarinesIntoOcean (char ocean[o][o])
 {
-    int i,j;
+    int i,j,i_1,j_1;
+    int sub=0;
+    int rep[o][o];
 
-        for(i=0;i<o;i++)
-            for(i=0;i<o;i++)
-                if(*rep[i][j]=='2')
-                    ocean[i][j]='S';
+    for(i=0;i<o;i++)
+        for(j=0;j<o;j++)
+            rep[i][j]=0;
+    
+    if((rep[i_1[sub]][j_1[sub]]==0)){
+        if(MD==CORR)
+            ocean[i_1[sub]][j_1[sub]]='S';
+
+        submarinesSpacing(rep,i_1,j_1,sub);
+        sub++;
+    }
+
 }
