@@ -24,7 +24,7 @@ Fabricio Ishizuka - 12021BCC033
 #include <string.h>
 #include "Bat.h"
 
-// MEXER NAS LINHAS 43-56(FAZER UMA FUNC PRA ISSO)
+//FAZER A SUBMARINESINTOOCEAN, MEXER NAS LINHAS 43-56(FAZER UMA FUNC PRA ISSO)
 //CRIAR FUNCAO PARA VERIFICAR SE O ATAQUE DIGITADO EH VALIDO
 //CRIAR FUNCAO PARA VERIFICAR ATAQUES, CRIAR FUNCAO PARA VERIFICAR CONDICAO DE FIM DE JOGO
 
@@ -154,6 +154,7 @@ int main(int argc, char *argv[])
 int argsOk(int argc, char *argv[])
 {
     char isint=' ';
+    
     if(argc>5)
         return 3;
     else if(argc<5)
@@ -266,8 +267,8 @@ void submarinesIntoOcean (char *ocean[o][o])
         }
     }
     while (sub<s){
-        i_1[sub]=rand%o;
-        j_1[sub]=rand%o;
+        i_1[sub]=rand()%o;
+        j_1[sub]=rand()%o;
 
         if((*ocean[i_1[sub]][j_1[sub]]==' ')){
             *ocean[i_1[sub]][j_1[sub]]='2';

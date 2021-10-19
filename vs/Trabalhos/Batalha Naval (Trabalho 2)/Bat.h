@@ -12,3 +12,4 @@ void showOcean(char ocean[o][o]);
 void showInventory(int d, int s, int t);
 void submarinesIntoOcean (char *ocean[o][o]);
 void showSubmarines(char ocean[o][o],char *rep[o][o]);
+void initRep(char *rep[o][o]);

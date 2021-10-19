@@ -70,8 +70,12 @@ int main(int argc, char *argv[])
     int acerto=0;   //Determina se o usuario acertou o disparo
 
     initOcean(oceano);
+    initRep(rep);
     submarinesIntoOcean(rep);
-    showSubmarines(oceano,rep);
+    
+    if(MD=CORR)
+        showSubmarines(oceano,rep);
+
     showOcean(oceano);
     showInventory(q_d,q_s,q_t);
 
@@ -154,6 +158,7 @@ int main(int argc, char *argv[])
 int argsOk(int argc, char *argv[])
 {
     char isint=' ';
+    
     if(argc>5)
         return 3;
     else if(argc<5)
@@ -255,19 +260,23 @@ void showInventory(int d, int s, int t)
 {
     printf("Destruidores: %d\nSubmarinos:   %d\nTorpedos:     %d\n\n",d,s,t);
 }
-void submarinesIntoOcean (char *ocean[o][o])
+void initRep(char *rep[o][o])
 {
-    int i,j,i_1[s],j_1[s];
-    int sub=0;
-    
-    for (i=0;i<=o;i++){  //Define o estado inicial da matriz como um espaco vazio
-        for(j=0;j<=o;j++){
-            *ocean[i][j]=' ';
+    int i,j;
+    for (i=0;i<o;i++){  //Define o estado inicial da matriz como um espaco vazio
+        for(j=0;j<o;j++){
+            &(rep[i][j])==' ';
         }
     }
+}
+void submarinesIntoOcean (char *ocean[o][o])
+{
+    int i_1[s],j_1[s];
+    int sub=0;
+    
     while (sub<s){
-        i_1[sub]=rand%o;
-        j_1[sub]=rand%o;
+        i_1[sub]=rand()%o;
+        j_1[sub]=rand()%o;
 
         if((*ocean[i_1[sub]][j_1[sub]]==' ')){
             *ocean[i_1[sub]][j_1[sub]]='2';
@@ -286,7 +295,6 @@ void submarinesIntoOcean (char *ocean[o][o])
 void showSubmarines(char ocean[o][o], char *rep[o][o])
 {
     int i,j;
-
         for(i=0;i<o;i++)
             for(i=0;i<o;i++)
                 if(*rep[i][j]=='2')
