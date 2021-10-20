@@ -1,76 +1,8 @@
-/*
-    O programa opera um jogo simples de batalha naval com dois modos, PLAY e CORR. Quando no modo CORR,
-todas as naves serao mostradas na tela. O oceano inicial aparece na tela, o usuario deve digitar qual
-setor do oceano ele deseja atirar (ex:A1). Se ele digitar algum caractere invalido, isso eh escrito na
-tela e o programa encerra. Se ele atirar em algum setor ja atirado ele deve atirar novamente sem perder
-torpedo algum. Se ele acertar um submarino, a mensagem de acerto eh escrita na tela e o oceano aparece
-novamente com um '*' no lugar que ele acertou. Em seguida mostra o que resta no seu inventario. Caso ele
-erre o tiro, aparece uma mensagem que ele afundou o torpedo no mar e um 'W' eh escrito nesse setor do oceano.
-O programa encerra se: o usuario acabar com todos destruidores e submarinos (escreve na tela que ele ganhou 
-o jogo) ou se o usuario nao tiver mais torpedos e ainda existir naves no oceano(escreve na tela que ele perdeu
-o jogo).
-    A quantidade de torpedos e o modo de jogo sao inseridos em tempo do lancamento do programa, ou seja
-o usuario deve inicial do jeito: ./a.out -t n -m MD   ou ./a.out -m MD -t n  onde n eh um numero inteiro
-e MD eh PLAY ou CORR.
-
-Codigo escrito em 2021 por:
-Gabriel Couto de Freitas - 12021BCC040 - https://github.com/gabrielcouto1
-Ana Barbara Campos - 12021BCC017 
-Fabricio Ishizuka - 12021BCC033
-
-*/
-#include <stdio.h> //Inclusao de biblioteca de funcoes basicas em C
-#include <stdlib.h> //Inclusao de biblioteca de funcoes basicas em C
-#include <ctype.h> //Inclusao de biblioteca para utilizacao de toupper, afim de reduzir erros do usuario   
-#include <string.h>
-#include "Bat.h"
-
-int main(int argc, char *argv[])
-{
-    int err=argsOk(argc,argv);
-    int t=argT(argv);
-    int MD=argMD(argv);       
-    char rep[o][o];
-    char oceano[o][o];  //Matriz oceano de ordem "o" preestabelecida
-    int q_d=d; //Qtd de destruidores restantes
-    int q_s=s;  //Qtd de submarinos restantes
-    int q_t=t;  //Qtd de torpedos restantes
-    int coluna_ataque=0;    //Coluna que o usuario deseja atacar  
-    char linha_ataque=' ';  //Linha que o usuario deseja atacar
-    int linha_ataque_1=0;   //Linha que o usuario deseja atacar 
-    int tiro=0;
-
-    if(err!=0){
-        errorMSG(err);
-        return err;
-    }
-    initOcean(oceano);
-    submarinesIntoOcean(rep);
-    if(MD==CORR)
-        showSubmarines(rep,oceano);
-    showOcean(oceano);
-    showInventory(q_d,q_s,q_t);
-
-    do{  //O usuario atira e o programa retorna o oceano atualizado
-        shootTorp(&linha_ataque,&coluna_ataque,&linha_ataque_1);
-        if(errShoot(coluna_ataque,linha_ataque_1)!=0){
-            printf("Voce digitou um setor do oceano inexistente.\n");
-            return 1;
-        }
-        tiro=hitShoot(coluna_ataque,linha_ataque_1,rep,oceano);
-        didHit(tiro,&q_t,&q_s);
-        showOcean(oceano);
-        showInventory(q_d,q_s,q_t);
-    } while((q_t>0)&&((q_d>0)||(q_s>0))); //Estabelece as condicoes de fim de jogo
-    
-    endGame(q_d,q_s,q_t);
-    
-    return 0;  //Encerra o programa e retorna o valor 0
-}
 int argsOk(int argc, char *argv[])
 {
     char isint=' ';
-    
+    int t=0;
+
     if(argc>5)
         return 3;
     else if(argc<5)
@@ -81,6 +13,11 @@ int argsOk(int argc, char *argv[])
         return 7;
     else if((strcmp(argv[1],"-t")==0)&&(strcmp(argv[3],"-m")==0)){
         isint=*argv[2];
+        t=atoi(argv[2]);
+        if(t<=0)
+            return 13;
+        else if (t<(s+d))
+            return 15;
         if(isdigit(isint)==0)
             return 9;
         else if((strcmp(argv[4],"PLAY")!=0)&&(strcmp(argv[4],"CORR")!=0))
@@ -88,6 +25,11 @@ int argsOk(int argc, char *argv[])
     }
     else if((strcmp(argv[3],"-t")==0)&&(strcmp(argv[1],"-m")==0)){
         isint=*argv[4];
+        t=atoi(argv[4]);
+        if(t<=0)
+            return 13;
+        else if (t<(s+d))
+            return 15;
         if(isdigit(isint)==0)
             return 9;
         else if((strcmp(argv[2],"PLAY")!=0)&&(strcmp(argv[2],"CORR")!=0))
@@ -101,28 +43,35 @@ void errorMSG(int x)
     switch (x){
         case 3:
             fprintf(stderr,"\nVoce digitou mais argumentos que 5.\n");
-            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6 \n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6.\n");
             break;
         case 5:
             fprintf(stderr,"\nVoce digitou menos argumentos que 5.\n");
-            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6 \n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6.\n");
             break;
         case 7:
             fprintf(stderr,"\nVoce nao digitou a identificacao dos argumentos (-t ou -m).\n");
-            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6 \n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6.\n");
             break;
         case 9:
             fprintf(stderr,"\nO argumento que indica a quantidade de torpedos nao foi um numero inteiro.\n");
-            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6 \n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6.\n");
             break;
         case 11:
             fprintf(stderr,"\nO argumento que inserido que indica o modo de jogo nao foi PLAY ou CORR.\n");
-            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6 \n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6.\n");
+            break;
+        case 13:
+            fprintf(stderr,"\nFoi inserido uma quantidade menor ou igual a 0 de torpedos.\n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6.\n");
+            break;
+        case 15:
+            fprintf(stderr,"\nFoi inserido uma quantidade de torpedos menor que a quantidade de naves no oceano.\n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6.\n");
             break;
         case 0:
             break;
     }
-       
 }
 void initOcean(char ocean[o][o])
 {
@@ -311,11 +260,11 @@ void endGame(int q_d, int q_s, int q_t)
 {   
     if(q_t==0){//Verifica qual foi a condicao para o jogo ter acabado
         if((q_s==0)&&(q_d==0))
-            printf("\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
+            fprintf(stderr,"\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
         else 
-            printf("\n\nVoce perdeu o jogo :(\nAcabaram todos os seus torpedos.\n");
+            fprintf(stderr,"\n\nVoce perdeu o jogo :(\nAcabaram todos os seus torpedos.\n");
     }
     
     else if((q_s==0)&&(q_d==0))//Verifica qual foi a condicao para o jogo ter acabado
-        printf("\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
+        fprintf(stderr,"\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
 }

@@ -30,6 +30,7 @@ const int d = 0;    //Quantidade de destruidores
 
 #define PLAY 0  //Definicao de "PLAY" para alterar facilmente o modo de execucao do codigo
 #define CORR 1  //Definicao de "CORR" para alterar facilmente o modo de execucao do codigo
+int MD;         //Declaracao da variavel de modo de jogo
 
 //Declaracao das funcoes
 int argsOk(int argc, char *argv[]);
@@ -51,7 +52,6 @@ int main(int argc, char *argv[])
 {
     int err=argsOk(argc,argv);  //Verifica se tem algum erro nos argumentos 
     int t=argT(argv);   //Armazena a quantidade de torpedos inserida no argumento
-    int MD=argMD(argv); //Armazena o modo de jogo inserido no argumento
     char rep[o][o]; //Matriz do oceano que auxilia no posicionamento de naves e modo de correcao
     char oceano[o][o];  //Matriz oceano de ordem "o" preestabelecida
     int q_d=d; //Qtd de destruidores restantes
@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
     int linha_ataque_1=0;   //Linha que o usuario deseja atacar 
     int tiro=0; //Variavel que diz se o tiro acertou ou nao
 
+    MD=argMD(argv); //Armazena o modo de jogo inserido no argumento
     if(err!=0){ //Se tiver algum erro na inicializacao do programa
         errorMSG(err);//Escreve na tela qual erro foi obtido
         return err;//Encerra o programa
@@ -96,7 +97,8 @@ A funcao checa se os argumentos inseridos sao validos e retorna um valor.*/
 int argsOk(int argc, char *argv[])
 {
     char isint=' ';
-    
+    int t=0;
+
     if(argc>5)
         return 3;
     else if(argc<5)
@@ -107,6 +109,11 @@ int argsOk(int argc, char *argv[])
         return 7;
     else if((strcmp(argv[1],"-t")==0)&&(strcmp(argv[3],"-m")==0)){
         isint=*argv[2];
+        t=atoi(argv[2]);
+        if(t<=0)
+            return 13;
+        else if (t<(s+d))
+            return 15;
         if(isdigit(isint)==0)
             return 9;
         else if((strcmp(argv[4],"PLAY")!=0)&&(strcmp(argv[4],"CORR")!=0))
@@ -114,6 +121,11 @@ int argsOk(int argc, char *argv[])
     }
     else if((strcmp(argv[3],"-t")==0)&&(strcmp(argv[1],"-m")==0)){
         isint=*argv[4];
+        t=atoi(argv[4]);
+        if(t<=0)
+            return 13;
+        else if (t<(s+d))
+            return 15;
         if(isdigit(isint)==0)
             return 9;
         else if((strcmp(argv[2],"PLAY")!=0)&&(strcmp(argv[2],"CORR")!=0))
@@ -133,23 +145,31 @@ void errorMSG(int x)
     switch (x){
         case 3:
             fprintf(stderr,"\nVoce digitou mais argumentos que 5.\n");
-            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6 \n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6.\n");
             break;
         case 5:
             fprintf(stderr,"\nVoce digitou menos argumentos que 5.\n");
-            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6 \n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6.\n");
             break;
         case 7:
             fprintf(stderr,"\nVoce nao digitou a identificacao dos argumentos (-t ou -m).\n");
-            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6 \n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6.\n");
             break;
         case 9:
             fprintf(stderr,"\nO argumento que indica a quantidade de torpedos nao foi um numero inteiro.\n");
-            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6 \n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6.\n");
             break;
         case 11:
             fprintf(stderr,"\nO argumento que inserido que indica o modo de jogo nao foi PLAY ou CORR.\n");
-            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6 \n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6.\n");
+            break;
+        case 13:
+            fprintf(stderr,"\nFoi inserido uma quantidade menor ou igual a 0 de torpedos.\n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6.\n");
+            break;
+        case 15:
+            fprintf(stderr,"\nFoi inserido uma quantidade de torpedos menor que a quantidade de naves no oceano.\n");
+            fprintf(stderr,"\nInsira da forma ./a.out -t 6 -m PLAY ou entao ./a.out -m PLAY -t 6.\n");
             break;
         case 0:
             break;
@@ -403,11 +423,11 @@ void endGame(int q_d, int q_s, int q_t)
 {   
     if(q_t==0){//Verifica qual foi a condicao para o jogo ter acabado
         if((q_s==0)&&(q_d==0))
-            printf("\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
+            fprintf(stderr,"\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
         else 
-            printf("\n\nVoce perdeu o jogo :(\nAcabaram todos os seus torpedos.\n");
+            fprintf(stderr,"\n\nVoce perdeu o jogo :(\nAcabaram todos os seus torpedos.\n");
     }
     
     else if((q_s==0)&&(q_d==0))//Verifica qual foi a condicao para o jogo ter acabado
-        printf("\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
+        fprintf(stderr,"\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
 }
