@@ -22,15 +22,37 @@ Fabricio Ishizuka - 12021BCC033
 #include <stdio.h> //Inclusao de biblioteca de funcoes basicas em C
 #include <stdlib.h> //Inclusao de biblioteca de funcoes basicas em C
 #include <ctype.h> //Inclusao de biblioteca para utilizacao de toupper, afim de reduzir erros do usuario   
-#include <string.h>
-#include "Bat.h"
+#include <string.h>//Inclusao de biblioteca de strings em C
+
+const int o = 5;    //Tamanho da matriz oceano
+const int s = 3;    //Quantidade de submarinos
+const int d = 0;    //Quantidade de destruidores
+
+#define PLAY 0  //Definicao de "PLAY" para alterar facilmente o modo de execucao do codigo
+#define CORR 1  //Definicao de "CORR" para alterar facilmente o modo de execucao do codigo
+
+//Declaracao das funcoes
+int argsOk(int argc, char *argv[]);
+void errorMSG(int x);
+void initOcean(char ocean[o][o]);
+void showInventory(int d, int s, int t);
+void showOcean(const char ocean[o][o]);
+void submarinesIntoOcean (char ocean[o][o]);
+void showSubmarines(char rep[o][o], char ocean[o][o]);
+int argMD(char *argv[]);
+int argT(char *argv[]);
+void shootTorp(char *linha, int *coluna,int *linha_1);
+int errShoot(int coluna, int linha);
+int hitShoot(int coluna, int linha, char rep[o][o], char ocean[o][o]);
+void didHit(int tiro, int *q_t, int *q_s);
+void endGame(int q_d, int q_s, int q_t);
 
 int main(int argc, char *argv[])
 {
-    int err=argsOk(argc,argv);
-    int t=argT(argv);
-    int MD=argMD(argv);       
-    char rep[o][o];
+    int err=argsOk(argc,argv);  //Verifica se tem algum erro nos argumentos 
+    int t=argT(argv);   //Armazena a quantidade de torpedos inserida no argumento
+    int MD=argMD(argv); //Armazena o modo de jogo inserido no argumento
+    char rep[o][o]; //Matriz do oceano que auxilia no posicionamento de naves e modo de correcao
     char oceano[o][o];  //Matriz oceano de ordem "o" preestabelecida
     int q_d=d; //Qtd de destruidores restantes
     int q_s=s;  //Qtd de submarinos restantes
@@ -38,35 +60,39 @@ int main(int argc, char *argv[])
     int coluna_ataque=0;    //Coluna que o usuario deseja atacar  
     char linha_ataque=' ';  //Linha que o usuario deseja atacar
     int linha_ataque_1=0;   //Linha que o usuario deseja atacar 
-    int tiro=0;
+    int tiro=0; //Variavel que diz se o tiro acertou ou nao
 
-    if(err!=0){
-        errorMSG(err);
-        return err;
+    if(err!=0){ //Se tiver algum erro na inicializacao do programa
+        errorMSG(err);//Escreve na tela qual erro foi obtido
+        return err;//Encerra o programa
     }
-    initOcean(oceano);
-    submarinesIntoOcean(rep);
-    if(MD==CORR)
-        showSubmarines(rep,oceano);
-    showOcean(oceano);
-    showInventory(q_d,q_s,q_t);
+    initOcean(oceano);  //Inicializa o oceano com ' ' 
+    submarinesIntoOcean(rep);   //Determina a posicao dos submarinos no oceano
+    if(MD==CORR)    //Escreve na tela a posicao dos submarinos se o modo for CORR
+        showSubmarines(rep,oceano); 
+    showOcean(oceano);  //Escreve o oceano na tela
+    showInventory(q_d,q_s,q_t);//Escreve o inventario na tela
 
     do{  //O usuario atira e o programa retorna o oceano atualizado
-        shootTorp(&linha_ataque,&coluna_ataque,&linha_ataque_1);
-        if(errShoot(coluna_ataque,linha_ataque_1)!=0){
+        shootTorp(&linha_ataque,&coluna_ataque,&linha_ataque_1);//Recebe o setor que o usuario atirou
+        if(errShoot(coluna_ataque,linha_ataque_1)!=0){  //Se o usuario digitou algum setor invalido
             printf("Voce digitou um setor do oceano inexistente.\n");
-            return 1;
+            return 1;//Encerra o programa
         }
-        tiro=hitShoot(coluna_ataque,linha_ataque_1,rep,oceano);
-        didHit(tiro,&q_t,&q_s);
-        showOcean(oceano);
-        showInventory(q_d,q_s,q_t);
+        tiro=hitShoot(coluna_ataque,linha_ataque_1,rep,oceano);//Estabelece condicao de tiro, se acertou ou errou
+        didHit(tiro,&q_t,&q_s);//Verifica se acertou, errou ou se ja tinha atirado nesta casa
+        showOcean(oceano);//Mostra o oceano atualizado na tela
+        showInventory(q_d,q_s,q_t);//Mostra o inventario atualizado na tela
     } while((q_t>0)&&((q_d>0)||(q_s>0))); //Estabelece as condicoes de fim de jogo
     
-    endGame(q_d,q_s,q_t);
+    endGame(q_d,q_s,q_t);//Escreve na tela a condicao de fim de jogo
     
     return 0;  //Encerra o programa e retorna o valor 0
 }
+/*
+argsOk
+-------------------------------------------------------------------------------------------
+A funcao checa se os argumentos inseridos sao validos e retorna um valor.*/
 int argsOk(int argc, char *argv[])
 {
     char isint=' ';
@@ -96,6 +122,12 @@ int argsOk(int argc, char *argv[])
     else 
         return 0;
 }
+/*
+errorMSG
+-------------------------------------------------------------------------------------------
+A funcao checa o valor retornado na funcao argsOk e se tiver algum erro
+ela mostra na tela e encerra o programa.
+*/
 void errorMSG(int x)
 {
     switch (x){
@@ -124,6 +156,10 @@ void errorMSG(int x)
     }
        
 }
+/*
+initOcean
+-------------------------------------------------------------------------------------------
+A funcao inicia a matriz oceano com espacos em branco ' '.*/
 void initOcean(char ocean[o][o])
 {
     int i,j;
@@ -133,10 +169,18 @@ void initOcean(char ocean[o][o])
         }
     }
 }
+/*
+showInventory
+-------------------------------------------------------------------------------------------
+A funcao mostra a quantidade de torpedos no inventario e quantas naves ainda restam.*/
 void showInventory(int d, int s, int t)
 {
     printf("Destruidores: %d\nSubmarinos:   %d\nTorpedos:     %d\n\n",d,s,t);
 }
+/*
+showOcean
+-------------------------------------------------------------------------------------------
+A funcao mostra o oceano atual na tela do usuario.*/
 void showOcean(const char ocean[o][o])
 {
     int i,j,k,h;
@@ -172,6 +216,11 @@ void showOcean(const char ocean[o][o])
             printf("\n");
         }
 }
+/*
+submarinesIntoOcean
+-------------------------------------------------------------------------------------------
+A funcao gera pesudo-aleatoriamente os submarinos no oceano.
+*/
 void submarinesIntoOcean (char ocean[o][o])
 {
     int i,j;
@@ -201,6 +250,11 @@ void submarinesIntoOcean (char ocean[o][o])
         }
     }
 }
+/*
+showSubmarines
+-------------------------------------------------------------------------------------------
+Se o modo for CORR, a funcao mostra no oceano onde estao todas as naves.
+*/
 void showSubmarines(char rep[o][o], char ocean[o][o])
 {
     int i,j;
@@ -209,6 +263,11 @@ void showSubmarines(char rep[o][o], char ocean[o][o])
             if(rep[i][j]=='2')
                 ocean[i][j]='S';
 }
+/*
+argMD
+-------------------------------------------------------------------------------------------
+A funcao armazena o argumento de modo de jogo inserido.
+*/
 int argMD(char *argv[])
 {
     int MD=0;
@@ -226,6 +285,11 @@ int argMD(char *argv[])
     }
     return MD;
 }
+/*
+argT
+-------------------------------------------------------------------------------------------
+A funcao armazena o argumento de quantidade de torpedos inseridos.
+*/
 int argT(char *argv[])
 {
     int t=0;
@@ -237,6 +301,11 @@ int argT(char *argv[])
 
     return t;
 }
+/*
+shootTorp
+-------------------------------------------------------------------------------------------
+A funcao armazena em qual setor do oceano o usuario deseja atacar.
+*/
 void shootTorp(char *linha, int *coluna,int *linha_1)
 {
     int i;
@@ -260,6 +329,12 @@ void shootTorp(char *linha, int *coluna,int *linha_1)
     if(*linha<65||*linha>o+64)
         *linha_1=99;
 }
+/*
+errShoot
+-------------------------------------------------------------------------------------------
+A funcao verifica se existe algum erro com o setor que o usuario atacou.
+Ela retorna um valor.
+*/
 int errShoot(int coluna, int linha)
 {
     if(linha==99)
@@ -273,6 +348,11 @@ int errShoot(int coluna, int linha)
     else
         return 0;
 }
+/*hitShoot
+-------------------------------------------------------------------------------------------
+A funcao verifica se o setor que o usuario atacou tem uma nave ou se ele ja 
+atirou neste setor. Retorna um valor.
+*/
 int hitShoot(int coluna, int linha, char rep[o][o], char ocean[o][o])
 {
     int i,j;
@@ -290,6 +370,12 @@ int hitShoot(int coluna, int linha, char rep[o][o], char ocean[o][o])
         return 2;//errou
     }
 }
+/*
+didHit
+-------------------------------------------------------------------------------------------
+A funcao verifica e escreve na tela se o usuario ja atirou nesta casa
+ou se eh uma casa invalida.
+*/
 void didHit(int tiro, int *q_t, int *q_s)
 {
     switch(tiro){
@@ -307,6 +393,12 @@ void didHit(int tiro, int *q_t, int *q_s)
             break;
     }
 }
+/*
+endGame
+-------------------------------------------------------------------------------------------
+A funcao verifica qual a condicao de fim de jogo e se o usuario ganhou 
+ou perdeu o jogo.
+*/
 void endGame(int q_d, int q_s, int q_t)
 {   
     if(q_t==0){//Verifica qual foi a condicao para o jogo ter acabado
