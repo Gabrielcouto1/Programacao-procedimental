@@ -150,13 +150,15 @@ void submarinesIntoOcean (char ocean[o][o])
         }
     }
 }
-void showSubmarines(char rep[o][o], char ocean[o][o])
+void showSubmarines(char rep[o][o], char ocean[o][o],char *argv[])
 {
-    int i,j;
-    for (i=0;i<o;i++)
-        for(j=0;j<o;j++)
-            if(rep[i][j]=='2')
-                ocean[i][j]='S';
+    if (argMD(argv)==CORR){
+        int i,j;
+        for (i=0;i<o;i++)
+            for(j=0;j<o;j++)
+                if(rep[i][j]=='2')
+                    ocean[i][j]='S';
+    }
 }
 int argMD(char *argv[])
 {

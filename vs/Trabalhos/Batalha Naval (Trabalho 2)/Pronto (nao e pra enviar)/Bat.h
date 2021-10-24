@@ -11,7 +11,7 @@ void initOcean(char ocean[o][o]);
 void showInventory(int d, int s, int t);
 void showOcean(const char ocean[o][o]);
 void submarinesIntoOcean (char ocean[o][o]);
-void showSubmarines(char rep[o][o], char ocean[o][o]);
+void showSubmarines(char rep[o][o], char ocean[o][o],char *argv[]);
 int argMD(char *argv[]);
 int argT(char *argv[]);
 void shootTorp(char *linha, int *coluna,int *linha_1);
