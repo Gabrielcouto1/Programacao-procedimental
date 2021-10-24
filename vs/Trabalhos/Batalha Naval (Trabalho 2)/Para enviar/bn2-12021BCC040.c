@@ -423,11 +423,11 @@ void endGame(int q_d, int q_s, int q_t)
 {   
     if(q_t==0){//Verifica qual foi a condicao para o jogo ter acabado
         if((q_s==0)&&(q_d==0))
-            fprintf(stderr,"\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
+            fprintf(stdout,"\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
         else 
-            fprintf(stderr,"\n\nVoce perdeu o jogo :(\nAcabaram todos os seus torpedos.\n");
+            fprintf(stdout,"\n\nVoce perdeu o jogo :(\nAcabaram todos os seus torpedos.\n");
     }
     
     else if((q_s==0)&&(q_d==0))//Verifica qual foi a condicao para o jogo ter acabado
-        fprintf(stderr,"\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
+        fprintf(stdout,"\n\nVoce ganhou o jogo :)!!!!\nAcabaram todos os navios no oceano.\n");
 }
