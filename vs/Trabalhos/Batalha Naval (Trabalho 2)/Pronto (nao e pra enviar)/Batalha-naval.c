@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
 
     initOcean(oceano);
     submarinesIntoOcean(rep);
-    showSubmarines(rep,oceano,argv); 
-    showOcean(oceano);  
+    showSubmarines(rep,oceano,argv);
+    showOcean(oceano);
     showInventory(q_d,q_s,q_t);
 
     do{
