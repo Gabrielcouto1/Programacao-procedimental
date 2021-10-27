@@ -1,0 +1,2 @@
+A aula foi basicamente aprender a gerar arquivos .o com suas funcoes e a inserir estes arquivos
+na hora da compilação de um programa.
