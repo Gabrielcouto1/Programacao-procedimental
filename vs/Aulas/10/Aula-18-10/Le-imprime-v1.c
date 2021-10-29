@@ -12,10 +12,19 @@
 
 int main()
 {
-    char s[4000];
+    int n=0;
+    FILE *f=NULL;
 
-    fscanf(stdin,"%[^\n]s",s);
-    fprintf(stdout,"%s",s);
+    f= fopen("le-imprime.txt", "r");
 
+    if (f==NULL){
+        fprintf(stderr,"\nNao foi possivel abrir o arquivo inserido.\n\n");
+        return 1;
+    }
+
+    while(fscanf(f,"%d",&n)!=EOF)
+        printf("%d\n",n);
+
+    fclose(f);
     return 0;  //Encerra o programa e retorna o valor 0
 }
