@@ -25,9 +25,8 @@ int main()
         qtd_linha++;
 
         N=rand() % 24;  //Gera um numero aleatorio de 0 ate 23
-
+        
         printf("%d ",N);    //Imprime na tela   
-
         qtd_num++;  //Aumenta um numero na quantidade de numeros gerados
     }while (N!=23); //Se o numero gerado for 23, ele encerra o programa
 
