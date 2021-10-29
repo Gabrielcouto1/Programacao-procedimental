@@ -15,9 +15,9 @@ const int MAX=30;
 int main(int argc, char *argv[])
 {
     char s[MAX];
-    char bn;
     FILE *f=NULL;
-    
+    char c;
+
     if(argc<2||argc>2){
         fprintf(stderr,"Quantidade de argumentos errada.\n\n");
         return 2;
@@ -27,10 +27,9 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    while(fscanf(f,"%[^\n]",s)!=EOF){
-        fscanf(f,"%c",&bn);
+    while(fscanf(f,"%[^\n]%%",s)!=EOF)
         printf("%s\n",s);
-    }
+    
     fclose(f);
     return 0;  //Encerra o programa e retorna o valor 0
 }
