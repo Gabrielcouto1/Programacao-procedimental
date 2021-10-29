@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
     char s[MAX];
     FILE *f=NULL;
     char c;
+    int numLinha=0;
 
     if(argc<2||argc>2){
         fprintf(stderr,"Quantidade de argumentos errada.\n\n");
@@ -29,7 +30,9 @@ int main(int argc, char *argv[])
 
     while(fscanf(f,"%[^\n]%%",s)!=EOF)
         printf("%s\n",s);
-    
+    while (EOF != (scanf("%*[^\n]") && scanf("%*c"))) 
+        numLinha++;
+        printf("num linha: %d\n",numLinha);
     fclose(f);
     return 0;  //Encerra o programa e retorna o valor 0
 }
