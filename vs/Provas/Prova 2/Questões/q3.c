@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 {
     int erro=isArgsOk(argc,argv);   //Declaracao da variavel erro que recebe o valor da funcao isArgsOK
 
-    if (erro!=0){   //Se o valor nao for 0, tem algum erro na declaracao de argumentos
+    if (erro!=0){       //Se o valor nao for 0, tem algum erro na declaracao de argumentos
         errorMsg(erro); //A funcao escreve na tela qual erro foi encontrado
         return erro;    //O programa encerra
     }
@@ -44,6 +44,7 @@ um valor diferente de 0 se tiver algum erro.
 int isArgsOk(int argc, char *argv[])
 {
     float f=0.0;
+
     if(argc<2)
         return 3;
     else if(isFloatNum(argv[1])==0)
@@ -69,6 +70,7 @@ int isFloatNum(char s[])
     int tam=0;
 
     tam=strlen(s);
+
     if((s[0]=='-')||(s[0]=='+'))
         i=1;
     else 
@@ -86,6 +88,7 @@ int isFloatNum(char s[])
             err=0;
         }
     }
+
     return err;
 }
 /*
@@ -124,8 +127,8 @@ float myAtoF (char s[])
     int d=0;        //Quantidade de casas decimais
     int dp=0;       //Indica se tem casas decimais
     int i=0;
-    int tam=0;
-    int result=1;
+    int tam=0;  //tamanho da string 
+    int result=1;   //resultado
 
     tam=strlen(s);
     if(s[0]=='-'){
